@@ -16,11 +16,10 @@ public class Ant {
         r = new Random();
         this.direction = new vector(randomFloat(-1,1),randomFloat(-1,1));
         this.direction.normalize();
-        speed = 1.5f;
+        speed = 1.0f;
         wanderStrength = 0.1f;
         grid.leaveTrail((int)x,(int)y);
     }
-
 
     void update() {
         updateDirection();
@@ -46,10 +45,8 @@ public class Ant {
         direction.x += randomFloat(-1,1) * wanderStrength;
         direction.y += randomFloat(-1,1) * wanderStrength;
         direction.normalize();
-        capDirection();
-    }
 
-    
+    }
 
     private void move() {
         this.x += direction.x * speed;
@@ -61,20 +58,7 @@ public class Ant {
         g.fillRect((int)this.x * scale, (int)this.y * scale, scale, scale);
     }
 
-    private void capDirection() {
-        if(direction.x < -1) {
-            direction.x = -1;
-        }
-        if(direction.x > 1) {
-            direction.x  = 1;
-        }
-        if(direction.y < -1) {
-            direction.y = -1;
-        }
-        if(direction.y > 1) {
-            direction.y = 1;
-        }
-    }
+
     private float randomFloat(float min, float max) {
         return min + r.nextFloat() * (max - min);
     }
