@@ -26,7 +26,7 @@ public class Ant {
         r = new Random();
         this.direction = new vector(randomFloat(-1,1),randomFloat(-1,1));
         this.direction.normalize();
-        speed = 2.0f;
+        speed = 1.0f;
         wanderStrength = 0.1f;
         grid.leaveTrail((int)x,(int)y);
     }
@@ -36,7 +36,7 @@ public class Ant {
         checkForObstacles();
         lookForTrails();
         move();
-        grid.leaveTrail((int)x,(int)y);
+        grid.leaveTrail((int)x,(int)y); // can throw exception 
     }
 
     
@@ -75,17 +75,28 @@ public class Ant {
         double tempY = direction.y;
 
         // -1.5708 rad = -90 degrees
-        direction.x =(float) (tempX * Math.cos(-1.5708) - tempY * Math.sin(-1.5708));
-        direction.y =(float) (tempX * Math.sin(-1.5708) + tempY * Math.cos(-1.5708));
+        // -0.785398 rad = -45 degrees
+        // -0.436332 rad = -25 degrees
+        direction.x =(float) (tempX * Math.cos(-0.436332) - tempY * Math.sin(-0.436332));
+        direction.y =(float) (tempX * Math.sin(-0.436332) + tempY * Math.cos(-0.436332));
     }
     private void turnRight() {
         double tempX = direction.x;
         double tempY = direction.y;
 
-        // -1.5708 rad = -90 degrees
-        direction.x =(float) (tempX * Math.cos(1.5708) - tempY * Math.sin(1.5708));
-        direction.y =(float) (tempX * Math.sin(1.5708) + tempY * Math.cos(1.5708));
+        // 1.5708 rad = 90 degrees
+        // 0.785398 rad = 45 degrees
+        // 0.436332 rad = 25 degrees
+        direction.x =(float) (tempX * Math.cos(0.436332) - tempY * Math.sin(0.436332));
+        direction.y =(float) (tempX * Math.sin(0.436332) + tempY * Math.cos(0.436332));
     }
+
+
+    // x x x x x
+    // x x x x x
+    // x x x x x 
+    // 0 x x x 0 
+    
 
     private boolean lookForFoodPheromone() {
         int tempX = Math.round(direction.x);
@@ -118,19 +129,19 @@ public class Ant {
             rightSpot = getPheromone((int)this.x,(int)this.y+1);
 
         } else if(tempX == 0 && tempY == 1) {
-            leftSpot = grid.foodPheroemone[(int)this.x+1][(int)this.y+1];
-            centerSpot = grid.foodPheroemone[(int)this.x][(int)this.y+1];
-            rightSpot = grid.foodPheroemone[(int)this.x-1][(int)this.y+1];
+            leftSpot = getPheromone((int)this.x+1,(int)this.y+1);
+            centerSpot = getPheromone((int)this.x,(int)this.y+1);
+            rightSpot = getPheromone((int)this.x-1,(int)this.y+1);
 
         } else if(tempX == -1 && tempY == 1) {
-            leftSpot = grid.foodPheroemone[(int)this.x][(int)this.y+1];
-            centerSpot = grid.foodPheroemone[(int)this.x-1][(int)this.y+1];
-            rightSpot = grid.foodPheroemone[(int)this.x-1][(int)this.y];
+            leftSpot = getPheromone((int)this.x,(int)this.y+1);
+            centerSpot = getPheromone((int)this.x-1,(int)this.y+1);
+            rightSpot = getPheromone((int)this.x-1,(int)this.y);
 
         } else if(tempX == -1 && tempY == 0) {
-            leftSpot = grid.foodPheroemone[(int)this.x-1][(int)this.y+1];
-            centerSpot = grid.foodPheroemone[(int)this.x-1][(int)this.y];
-            rightSpot = grid.foodPheroemone[(int)this.x-1][(int)this.y-1];
+            leftSpot = getPheromone((int)this.x-1,(int)this.y+1);
+            centerSpot = getPheromone((int)this.x-1,(int)this.y);
+            rightSpot = getPheromone((int)this.x-1,(int)this.y-1);
         } else {
             System.out.println("LookForPheromone problem");
         }
