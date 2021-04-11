@@ -14,7 +14,6 @@ public class Grid {
         // searchPheromone = new int[width][height];
         foodPheroemone = new int[width][height];
 
-        Color temp = new Color(2,2,2,2);
         for(int i = 0; i < width; i++) {
             for(int j = 0; j < height; j++) {
                 // searchPheromone[i][j] = 0;

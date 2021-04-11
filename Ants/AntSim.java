@@ -26,7 +26,7 @@ public class AntSim extends JPanel implements ActionListener{
         ants = new ArrayList<Ant>();
         r = new Random();
         for(int i = 0; i < this.numOfAnts; i++) {
-            ants.add(new Ant(newRandomInt(0,scaledWidth), newRandomInt(0, scaledHeight),grid));
+            ants.add(new Ant(newRandomInt(0,scaledWidth), newRandomInt(0, scaledHeight),grid, this));
         }
     }
 
@@ -54,4 +54,20 @@ public class AntSim extends JPanel implements ActionListener{
         }
         super.repaint();
     }
+
+    public int getScaledWidth() {
+        return scaledWidth;
+    }
+
+
+    public int getScaledHeight() {
+        return scaledHeight;
+    }
+
+
+
+    public int getScale() {
+        return scale;
+    }
+
 }
