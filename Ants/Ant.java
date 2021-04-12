@@ -31,7 +31,7 @@ public class Ant {
 
         speed = 2.0f;
         wanderStrength = 0.1f;
-        grid.leaveTrail((int) x, (int) y, 0);
+        //grid.leaveTrail((int) x, (int) y, 0);
     }
 
     void update() {
@@ -48,15 +48,28 @@ public class Ant {
     }
 
     private void lookForTrails() {
-        if (lookForFoodPheromone()) {
-            if (centerSpot.value < Math.max(leftSpot.value, rightSpot.value)) {
-                if (leftSpot.value > rightSpot.value) {
-                    turnLeft();
-                } else if (rightSpot.value > leftSpot.value) {
-                    turnRight();
+
+        if (lookForPheromones(isCarringFood)) {
+            if (isCarringFood) {
+                if (centerSpot.searchPheromoneVal < Math.max(leftSpot.searchPheromoneVal,
+                        rightSpot.searchPheromoneVal)) {
+                    if (leftSpot.searchPheromoneVal > rightSpot.searchPheromoneVal) {
+                        turnLeft();
+                    } else if (rightSpot.searchPheromoneVal > leftSpot.searchPheromoneVal) {
+                        turnRight();
+                    }
+                }
+            } else {
+                if (centerSpot.foodPheromoneVal < Math.max(leftSpot.foodPheromoneVal, rightSpot.foodPheromoneVal)) {
+                    if (leftSpot.foodPheromoneVal > rightSpot.foodPheromoneVal) {
+                        turnLeft();
+                    } else if (rightSpot.foodPheromoneVal > leftSpot.foodPheromoneVal) {
+                        turnRight();
+                    }
                 }
             }
         }
+
     }
 
     private void checkForObstacles() {
@@ -97,14 +110,21 @@ public class Ant {
         direction.y = (float) (tempX * Math.sin(0.436332) + tempY * Math.cos(0.436332));
     }
 
-    private boolean lookForFoodPheromone() {
+    private boolean lookForPheromones(boolean pheromoneType) {
 
         leftSpot.update(direction, this.x, this.y);
         centerSpot.update(direction, this.x, this.y);
         rightSpot.update(direction, this.x, this.y);
 
-        if (leftSpot.value > 0 || centerSpot.value > 0 || rightSpot.value > 0) {
-            return true;
+        if (pheromoneType) {
+            if (leftSpot.searchPheromoneVal > 0 || centerSpot.searchPheromoneVal > 0
+                    || rightSpot.searchPheromoneVal > 0) {
+                return true;
+            }
+        } else {
+            if (leftSpot.foodPheromoneVal > 0 || centerSpot.foodPheromoneVal > 0 || rightSpot.foodPheromoneVal > 0) {
+                return true;
+            }
         }
         return false;
 
@@ -117,7 +137,7 @@ public class Ant {
     }
 
     void draw(Graphics g, int scale) {
-        if(isCarringFood) {
+        if (isCarringFood) {
             g.setColor(Color.yellow);
         } else {
             g.setColor(Color.white);
@@ -161,13 +181,15 @@ class sensor {
     int spotY;
     vector sensDirection;
     double turnInRads;
-    int value;
+    int foodPheromoneVal;
+    int searchPheromoneVal;
     double tempDirX;
     double tempDirY;
     Grid grid;
 
     public sensor(double rads, vector antDirection, float x, float y, Grid grid) {
-        value = 0;
+        foodPheromoneVal = 0;
+        searchPheromoneVal = 0;
         this.grid = grid;
         turnInRads = rads;
         tempDirX = antDirection.x;
@@ -180,6 +202,7 @@ class sensor {
     }
 
     public void update(vector antDirection, float x, float y) {
+
         tempDirX = antDirection.x * 3;
         tempDirY = antDirection.y * 3;
         this.sensDirection.x = (float) (tempDirX * Math.cos(turnInRads) - tempDirY * Math.sin(turnInRads));
@@ -187,22 +210,32 @@ class sensor {
 
         this.spotX = (int) (x + sensDirection.x);
         this.spotY = (int) (y + sensDirection.y);
-        value = 0;
+        foodPheromoneVal = 0;
+        searchPheromoneVal = 0;
 
-        if (!(spotX < 0 || spotX > grid.width - 1 || spotY < 0 || spotY > grid.height - 1)) {
-            value += grid.foodPheromone[spotX][spotY];
+        if (0 <= spotX && spotX < grid.width && 0 <= spotY && spotY < grid.height) {
+            foodPheromoneVal += grid.foodPheromone[spotX][spotY];
+            searchPheromoneVal += grid.searchPheromone[spotX][spotY];
         }
-        if (!(spotX + 1 < 0 || spotX + 1 > grid.width - 1 || spotY < 0 || spotY > grid.height - 1)) {
-            value += grid.foodPheromone[spotX + 1][spotY];
+
+        if (0 <= (spotX + 1) && (spotX + 1) < grid.width && 0 <= spotY && spotY < grid.height) {
+            foodPheromoneVal += grid.foodPheromone[spotX + 1][spotY];
+            searchPheromoneVal += grid.searchPheromone[spotX + 1][spotY];
         }
-        if (!(spotX - 1 < 0 || spotX - 1 > grid.width - 1 || spotY < 0 || spotY > grid.height - 1)) {
-            value += grid.foodPheromone[spotX - 1][spotY];
+
+        if (0 <= (spotX - 1) && (spotX - 1) < grid.width && 0 <= spotY && spotY < grid.height) {
+            foodPheromoneVal += grid.foodPheromone[spotX - 1][spotY];
+            searchPheromoneVal += grid.searchPheromone[spotX - 1][spotY];
         }
-        if (!(spotX < 0 || spotX > grid.width - 1 || spotY + 1 < 0 || spotY + 1 > grid.height - 1)) {
-            value += grid.foodPheromone[spotX][spotY + 1];
+
+        if (0 <= spotX && spotX < grid.width && 0 <= (spotY + 1) && (spotY + 1) < grid.height) {
+            foodPheromoneVal += grid.foodPheromone[spotX][spotY + 1];
+            searchPheromoneVal += grid.searchPheromone[spotX][spotY + 1];
         }
-        if (!(spotX < 0 || spotX > grid.width - 1 || spotY - 1 < 0 || spotY - 1 > grid.height - 1)) {
-            value += grid.foodPheromone[spotX][spotY - 1];
+
+        if (0 <= spotX && spotX < grid.width && 0 <= (spotY - 1) && (spotY - 1) < grid.height) {
+            foodPheromoneVal += grid.foodPheromone[spotX][spotY - 1];
+            searchPheromoneVal += grid.searchPheromone[spotX][spotY - 1];
         }
     }
 
