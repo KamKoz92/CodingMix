@@ -13,7 +13,7 @@ public class Main {
 
         simulation = new AntSim(width, height, 20);
         new Window(simulation, width, height, "Ant Simulation");
-        timer = new Timer(200, simulation);
+        timer = new Timer(50, simulation);
         timer.start();
     }
 }

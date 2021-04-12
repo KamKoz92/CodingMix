@@ -8,7 +8,7 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
-public class AntSim extends JPanel implements ActionListener{
+public class AntSim extends JPanel implements ActionListener {
     private static final long serialVersionUID = 1L;
     private int numOfAnts;
     private List<Ant> ants;
@@ -17,16 +17,18 @@ public class AntSim extends JPanel implements ActionListener{
     private int scaledWidth;
     private int scaledHeight;
     private int scale;
+
     public AntSim(int width, int height, int numOfAnts) {
         scale = 2;
-        scaledWidth = width/scale;
-        scaledHeight = height/scale;
+        scaledWidth = width / scale;
+        scaledHeight = height / scale;
         this.numOfAnts = numOfAnts;
         grid = new Grid(scaledWidth, scaledHeight);
         ants = new ArrayList<Ant>();
         r = new Random();
-        for(int i = 0; i < this.numOfAnts; i++) {
-            ants.add(new Ant(newRandomInt(0,scaledWidth), newRandomInt(0, scaledHeight),grid, this));
+        for (int i = 0; i < this.numOfAnts; i++) {
+            
+            ants.add(new Ant(newRandomInt(0, scaledWidth), newRandomInt(0, scaledHeight), grid, this, r.nextBoolean()));
         }
     }
 
@@ -36,7 +38,7 @@ public class AntSim extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        for(Ant a: ants) {
+        for (Ant a : ants) {
             a.update();
         }
         grid.evaporation();
@@ -46,11 +48,10 @@ public class AntSim extends JPanel implements ActionListener{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.BLACK);
-        g.fillRect(0, 0, scaledWidth*scale, scaledHeight*scale);
+        g.fillRect(0, 0, scaledWidth * scale, scaledHeight * scale);
         grid.drawTrails(g);
-        g.setColor(Color.white);
-        for(Ant a: ants) {
-            a.draw(g,scale);
+        for (Ant a : ants) {
+            a.draw(g, scale);
         }
         super.repaint();
     }
@@ -59,12 +60,9 @@ public class AntSim extends JPanel implements ActionListener{
         return scaledWidth;
     }
 
-
     public int getScaledHeight() {
         return scaledHeight;
     }
-
-
 
     public int getScale() {
         return scale;
