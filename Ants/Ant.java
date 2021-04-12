@@ -14,13 +14,13 @@ public class Ant {
     private boolean isCarringFood;
     private sensor leftSpot, centerSpot, rightSpot;
 
-    public Ant(int x, int y, Grid grid, AntSim antSim, boolean food) {
+    public Ant(int x, int y, Grid grid, AntSim antSim){ //}, boolean food) {
 
         this.antSim = antSim;
         this.x = x;
         this.y = y;
         this.grid = grid;
-        this.isCarringFood = food;
+        this.isCarringFood = false;
         r = new Random();
         this.direction = new vector(randomFloat(-1, 1), randomFloat(-1, 1));
         this.direction.normalize();
@@ -31,7 +31,6 @@ public class Ant {
 
         speed = 2.0f;
         wanderStrength = 0.1f;
-        //grid.leaveTrail((int) x, (int) y, 0);
     }
 
     void update() {

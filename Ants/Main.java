@@ -7,7 +7,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        int width = 800;
+        int width = 1200;
         int height = 800;
 
 

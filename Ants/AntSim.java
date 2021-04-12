@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import javax.swing.JPanel;
 
 public class AntSim extends JPanel implements ActionListener {
@@ -17,6 +16,7 @@ public class AntSim extends JPanel implements ActionListener {
     private int scaledWidth;
     private int scaledHeight;
     private int scale;
+    private Nest nest;
 
     public AntSim(int width, int height, int numOfAnts) {
         scale = 2;
@@ -26,10 +26,13 @@ public class AntSim extends JPanel implements ActionListener {
         grid = new Grid(scaledWidth, scaledHeight);
         ants = new ArrayList<Ant>();
         r = new Random();
+        nest = new Nest(scaledWidth / 2 - 10, scaledHeight / 2 - 10, 10, scale);
         for (int i = 0; i < this.numOfAnts; i++) {
-            
-            ants.add(new Ant(newRandomInt(0, scaledWidth), newRandomInt(0, scaledHeight), grid, this, r.nextBoolean()));
+
+            ants.add(new Ant(newRandomInt(nest.x, nest.x + nest.size), newRandomInt(nest.y, nest.y + nest.size), grid,
+                    this));
         }
+
     }
 
     private int newRandomInt(int min, int max) {
@@ -50,6 +53,7 @@ public class AntSim extends JPanel implements ActionListener {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, scaledWidth * scale, scaledHeight * scale);
         grid.drawTrails(g);
+        nest.draw(g);
         for (Ant a : ants) {
             a.draw(g, scale);
         }
