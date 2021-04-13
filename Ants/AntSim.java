@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 import javax.swing.JPanel;
 
+
 public class AntSim extends JPanel implements ActionListener {
     private static final long serialVersionUID = 1L;
     private int numOfAnts;
@@ -32,6 +33,7 @@ public class AntSim extends JPanel implements ActionListener {
             ants.add(new Ant(newRandomInt(nest.x, nest.x + nest.size), newRandomInt(nest.y, nest.y + nest.size), grid,
                     this));
         }
+
 
     }
 

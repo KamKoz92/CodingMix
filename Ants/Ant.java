@@ -1,6 +1,10 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.awt.geom.Point2D;
+import java.awt.geom.Line2D;
 
 public class Ant {
     private float x;
@@ -13,8 +17,9 @@ public class Ant {
     private AntSim antSim;
     private boolean isCarringFood;
     private sensor leftSpot, centerSpot, rightSpot;
+    private Detector detector;
 
-    public Ant(int x, int y, Grid grid, AntSim antSim){ //}, boolean food) {
+    public Ant(int x, int y, Grid grid, AntSim antSim) { // }, boolean food) {
 
         this.antSim = antSim;
         this.x = x;
@@ -31,9 +36,16 @@ public class Ant {
 
         speed = 2.0f;
         wanderStrength = 0.1f;
+        this.detector = new Detector(Math.PI / 2, direction, this.x, this.y);
     }
 
     void update() {
+        if (isCarringFood) {
+            lookForNest();
+        } else {
+            lookForFood();
+        }
+        detector.update(direction, this.x, this.y);
         updateDirection();
         checkForObstacles();
         lookForTrails();
@@ -44,6 +56,13 @@ public class Ant {
             grid.leaveTrail((int) x, (int) y, 0);
         }
 
+    }
+
+    private void lookForFood() {
+
+    }
+
+    private void lookForNest() {
     }
 
     private void lookForTrails() {
@@ -141,7 +160,16 @@ public class Ant {
         } else {
             g.setColor(Color.white);
         }
+
         g.fillRect((int) this.x * scale, (int) this.y * scale, scale, scale);
+
+        g.fillRect(detector.leftSpot.x * scale, detector.leftSpot.y * scale, scale,
+        scale);
+        g.fillRect(detector.rightSpot.x * scale, detector.rightSpot.y * scale, scale,
+        scale);
+        for (Point p : detector.detectorPoints) {
+            g.fillRect(p.x * scale, p.y * scale, scale, scale);
+        }
     }
 
     private float randomFloat(float min, float max) {
@@ -191,8 +219,8 @@ class sensor {
         searchPheromoneVal = 0;
         this.grid = grid;
         turnInRads = rads;
-        tempDirX = antDirection.x;
-        double tempDirY = antDirection.y;
+        tempDirX = antDirection.x * 3;
+        tempDirY = antDirection.y * 3;
         sensDirection = new vector((float) (tempDirX * Math.cos(rads) - tempDirY * Math.sin(rads)) * 2,
                 (float) (tempDirX * Math.sin(rads) + tempDirY * Math.cos(rads)) * 2);
 
@@ -235,6 +263,83 @@ class sensor {
         if (0 <= spotX && spotX < grid.width && 0 <= (spotY - 1) && (spotY - 1) < grid.height) {
             foodPheromoneVal += grid.foodPheromone[spotX][spotY - 1];
             searchPheromoneVal += grid.searchPheromone[spotX][spotY - 1];
+        }
+    }
+}
+
+class Point {
+    int x;
+    int y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+class Detector {
+    public List<Point> detectorPoints;
+    public Point leftSpot, rightSpot;
+    public vector leftVector, rightVector;
+    public double angle;
+    double tempDirX;
+    double tempDirY;
+
+    public Detector(double angle, vector antDirection, float x, float y) {
+        this.angle = angle;
+        tempDirX = antDirection.x * 8;
+        tempDirY = antDirection.y * 8;
+        detectorPoints = new ArrayList<Point>();
+
+        leftVector = new vector((float) (tempDirX * Math.cos(-angle / 2) - tempDirY * Math.sin(-angle / 2)),
+                (float) (tempDirX * Math.sin(-angle / 2) + tempDirY * Math.cos(-angle / 2)));
+
+        rightVector = new vector((float) (tempDirX * Math.cos(angle / 2) - tempDirY * Math.sin(angle / 2)),
+                (float) (tempDirX * Math.sin(angle / 2) + tempDirY * Math.cos(angle / 2)));
+
+        this.leftSpot = new Point((int) (x + leftVector.x), (int) (y + leftVector.y));
+        this.rightSpot = new Point((int) (x + rightVector.x), (int) (y + rightVector.y));
+
+        setLinePoints(leftSpot.x, leftSpot.y, rightSpot.x, rightSpot.y);
+    }
+
+    public void update(vector antDirection, float x, float y) {
+        tempDirX = antDirection.x * 8;
+        tempDirY = antDirection.y * 8;
+
+        leftVector.x = (float) (tempDirX * Math.cos(-angle / 2) - tempDirY * Math.sin(-angle / 2));
+        leftVector.y = (float) (tempDirX * Math.sin(-angle / 2) + tempDirY * Math.cos(-angle / 2));
+
+        rightVector.x = (float) (tempDirX * Math.cos(angle / 2) - tempDirY * Math.sin(angle / 2));
+        rightVector.y = (float) (tempDirX * Math.sin(angle / 2) + tempDirY * Math.cos(angle / 2));
+
+        leftSpot.x = (int) (x + leftVector.x);
+        leftSpot.y = (int) (y + leftVector.y);
+
+        rightSpot.x = (int) (x + rightVector.x);
+        rightSpot.y = (int) (y + rightVector.y);
+
+        detectorPoints.clear();
+        setLinePoints(leftSpot.x, leftSpot.y, rightSpot.x, rightSpot.y);
+    }
+
+    private void setLinePoints(int x1, int y1, int x2, int y2) {
+        int dx, dy, p, x, y;
+        dx = x2 - x1;
+        dy = y2 - y1;
+        x = x1;
+        y = y1;
+        p = 2 * dy - dx;
+        while (x < x2) {
+            if (p >= 0) {
+                detectorPoints.add(new Point(x, y));
+                y += 1;
+                p += 2 * dy - 2 * dx;
+            } else {
+                detectorPoints.add(new Point(x, y));
+                p += 2 * dy;
+            }
+            x += 1;
         }
     }
 

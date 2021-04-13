@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
+
+
 public class Grid {
 
     public int width;
@@ -67,4 +69,5 @@ public class Grid {
             
         }
     }
+  
 }
