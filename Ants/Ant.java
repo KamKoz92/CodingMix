@@ -36,7 +36,7 @@ public class Ant {
 
         speed = 2.0f;
         wanderStrength = 0.1f;
-        this.detector = new Detector(Math.PI / 2, direction, this.x, this.y);
+        this.detector = new Detector(Math.PI / 3, direction, this.x, this.y, 6);
     }
 
     void update() {
@@ -160,13 +160,10 @@ public class Ant {
         } else {
             g.setColor(Color.white);
         }
-
         g.fillRect((int) this.x * scale, (int) this.y * scale, scale, scale);
 
-        g.fillRect(detector.leftSpot.x * scale, detector.leftSpot.y * scale, scale,
-        scale);
-        g.fillRect(detector.rightSpot.x * scale, detector.rightSpot.y * scale, scale,
-        scale);
+        g.fillRect(detector.leftSpot.x * scale, detector.leftSpot.y * scale, scale, scale);
+        g.fillRect(detector.rightSpot.x * scale, detector.rightSpot.y * scale, scale, scale);
         for (Point p : detector.detectorPoints) {
             g.fillRect(p.x * scale, p.y * scale, scale, scale);
         }
@@ -284,11 +281,12 @@ class Detector {
     public double angle;
     double tempDirX;
     double tempDirY;
-
-    public Detector(double angle, vector antDirection, float x, float y) {
+    private int length;
+    public Detector(double angle, vector antDirection, float x, float y, int lenght) {
         this.angle = angle;
-        tempDirX = antDirection.x * 8;
-        tempDirY = antDirection.y * 8;
+        this.length = lenght;
+        tempDirX = antDirection.x * lenght;
+        tempDirY = antDirection.y * length;
         detectorPoints = new ArrayList<Point>();
 
         leftVector = new vector((float) (tempDirX * Math.cos(-angle / 2) - tempDirY * Math.sin(-angle / 2)),
@@ -304,8 +302,8 @@ class Detector {
     }
 
     public void update(vector antDirection, float x, float y) {
-        tempDirX = antDirection.x * 8;
-        tempDirY = antDirection.y * 8;
+        tempDirX = antDirection.x * length;
+        tempDirY = antDirection.y * length;
 
         leftVector.x = (float) (tempDirX * Math.cos(-angle / 2) - tempDirY * Math.sin(-angle / 2));
         leftVector.y = (float) (tempDirX * Math.sin(-angle / 2) + tempDirY * Math.cos(-angle / 2));
@@ -323,24 +321,27 @@ class Detector {
         setLinePoints(leftSpot.x, leftSpot.y, rightSpot.x, rightSpot.y);
     }
 
-    private void setLinePoints(int x1, int y1, int x2, int y2) {
-        int dx, dy, p, x, y;
-        dx = x2 - x1;
-        dy = y2 - y1;
-        x = x1;
-        y = y1;
-        p = 2 * dy - dx;
-        while (x < x2) {
-            if (p >= 0) {
-                detectorPoints.add(new Point(x, y));
-                y += 1;
-                p += 2 * dy - 2 * dx;
-            } else {
-                detectorPoints.add(new Point(x, y));
-                p += 2 * dy;
+    private void setLinePoints(int x0, int y0, int x1, int y1) {
+        // int dx, dy, p, x, y;
+        int dx = Math.abs(x1 - x0);
+        int sx = (x0 < x1) ? 1 : -1;
+        int dy = -Math.abs(y1 - y0);
+        int sy = (y0 < y1) ? 1 : -1;
+        int err = dx + dy;
+        int e2, x = x0, y = y0;
+        while (true) {
+            detectorPoints.add(new Point(x, y));
+            if (x == x1 && y == y1)
+                break;
+            e2 = 2 * err;
+            if (e2 >= dy) {
+                err += dy;
+                x += sx;
             }
-            x += 1;
+            if(e2 <= dx) {
+                err += dx;
+                y += sy;
+            }
         }
     }
-
 }
