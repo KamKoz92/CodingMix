@@ -11,9 +11,9 @@ public class Main {
         int height = 800;
 
 
-        simulation = new AntSim(width, height, 1);
+        simulation = new AntSim(width, height, 100);
         new Window(simulation, width, height, "Ant Simulation");
-        timer = new Timer(50, simulation);
+        timer = new Timer(10, simulation);
         timer.start();
     }
 }

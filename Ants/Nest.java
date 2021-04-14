@@ -1,8 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
-
-
 public class Nest {
     public  int x;
     public  int y;
