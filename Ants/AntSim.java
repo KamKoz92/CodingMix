@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 import javax.swing.JPanel;
 
-
 public class AntSim extends JPanel implements ActionListener {
     private static final long serialVersionUID = 1L;
     private int numOfAnts;
@@ -30,12 +29,14 @@ public class AntSim extends JPanel implements ActionListener {
         nest = new Nest(scaledWidth / 2 - 10, scaledHeight / 2 - 10, 10, scale);
         grid.addNest(nest);
         for (int i = 0; i < this.numOfAnts; i++) {
-            ants.add(new Ant(newRandomInt(nest.x, nest.x + nest.size), 
-                            newRandomInt(nest.y, nest.y + nest.size), grid,
-                            this));
+            ants.add(new Ant(newRandomInt(nest.x, nest.x + nest.size), newRandomInt(nest.y, nest.y + nest.size), grid,
+                    this));
         }
-        
-        grid.addFood(50, 50, 15);
+
+        grid.addFood(50, 50, 25);
+        grid.addFood(500, 50, 25);
+        grid.addFood(50, 250, 25);
+        grid.addFood(500, 250, 25);
     }
 
     private int newRandomInt(int min, int max) {
@@ -62,6 +63,27 @@ public class AntSim extends JPanel implements ActionListener {
         }
         super.repaint();
     }
+
+    // private void drawC(Point center, float radius, Graphics g) {
+    //     int top = (int)Math.floor(center.y - radius), 
+    //         bottom = (int)Math.ceil(center.y + radius), 
+    //         left = (int)Math.floor(center.x - radius),
+    //         right = (int)Math.ceil(center.x + radius);
+
+    //     for (int y = top; y <= bottom; y++) {
+    //         for (int x = left; x <= right; x++) {
+    //             if (inside_circle(center, new Point(x, y), radius)) {
+    //                 g.fillRect(x*scale, y*scale, scale, scale);
+    //             }
+    //         }
+    //     }
+    // }
+
+    // private boolean inside_circle(Point center, Point tile, float radius) {
+    //     float dx = center.x - tile.x, dy = center.y - tile.y;
+    //     float distance_squared = dx * dx + dy * dy;
+    //     return distance_squared <= radius * radius;
+    // }
 
     public int getScaledWidth() {
         return scaledWidth;

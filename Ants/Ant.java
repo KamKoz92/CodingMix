@@ -1,7 +1,5 @@
 import java.awt.Color;
 import java.awt.Graphics;
-// import java.util.ArrayList;
-// import java.util.List;
 import java.util.Random;
 
 public class Ant {
@@ -18,7 +16,6 @@ public class Ant {
     private Detector detector;
     private boolean lookingForObjects;
 
-
     public Ant(int x, int y, Grid grid, AntSim antSim) {
         this.antSim = antSim;
         this.x = x;
@@ -28,20 +25,14 @@ public class Ant {
         r = new Random();
         this.direction = new Vector(randomFloat(-1, 1), randomFloat(-1, 1));
         this.direction.normalize();
-        leftSpot = new Sensor(-Math.PI / 4, direction, this.x, this.y, grid, 3);
-        centerSpot = new Sensor(0.0, direction, this.x, this.y, grid, 3);
-        rightSpot = new Sensor(Math.PI / 4, direction, this.x, this.y, grid, 3);
+        leftSpot = new Sensor(-Math.PI / 7, direction, this.x, this.y, grid, 1.5f, antSim.getScale());
+        centerSpot = new Sensor(0.0, direction, this.x, this.y, grid, 1.5f, antSim.getScale());
+        rightSpot = new Sensor(Math.PI / 7, direction, this.x, this.y, grid, 1.5f, antSim.getScale());
 
         speed = 2.0f;
-        wanderStrength = 0.1f;
-        this.detector = new Detector(Math.PI / 3, direction, this.x, this.y, 6, grid, Detector.FOOD);
+        wanderStrength = 0.3f;
+        this.detector = new Detector(Math.PI / 2, direction, this.x, this.y, 8, grid, Detector.FOOD);
         lookingForObjects = true;
-
-        // proximitySensors = new Sensor[3];
-        // proximitySensors[0] = new Sensor(-Math.PI / 6, direction, this.x, this.y, grid, 3.5f);
-        // proximitySensors[1] = new Sensor(0.0, direction, this.x, this.y, grid, 2.5f);
-        // proximitySensors[2] = new Sensor(Math.PI / 6, direction, this.x, this.y, grid, 3.5f);
-
     }
 
     void update() {
@@ -54,14 +45,12 @@ public class Ant {
             proximtyDetection();
         }
 
-        
         bounceOfWalls();
         move();
         leavePheromones();
     }
 
     private void proximtyDetection() {
-        
         if (detectProximity()) {
             turnBack();
             lookingForObjects = true;
@@ -70,11 +59,19 @@ public class Ant {
     }
 
     private boolean detectProximity() {
-        if(isCarringFood) {
-            return grid.checkSquareForObject((int)this.x, (int) this.y, Detector.NEST);
-        } else {
-            return grid.checkSquareForObject((int)this.x, (int) this.y, Detector.FOOD);
+
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (isCarringFood) {
+                    if (grid.checkSquareForObject((int) this.x + i, (int) this.y + j, Detector.NEST))
+                        return true;
+                } else {
+                    if (grid.checkSquareForObject((int) this.x + i, (int) this.y + j, Detector.FOOD))
+                        return true;
+                }
+            }
         }
+        return false;
     }
 
     private void leavePheromones() {
@@ -88,7 +85,6 @@ public class Ant {
     private void lookForObjects() {
         if (isCarringFood) {
             if (detector.detectObject(Detector.NEST)) {
-                System.out.println("Found nest");
                 direction = Vector.calculateVector((int) this.x, (int) this.y, detector.foundPoint.x,
                         detector.foundPoint.y);
                 direction.normalize();
@@ -96,7 +92,6 @@ public class Ant {
             }
         } else {
             if (detector.detectObject(Detector.FOOD)) {
-                System.out.println("Found food");
                 direction = Vector.calculateVector((int) this.x, (int) this.y, detector.foundPoint.x,
                         detector.foundPoint.y);
                 direction.normalize();
@@ -108,19 +103,18 @@ public class Ant {
     private void lookForTrails() {
         if (lookForPheromones(isCarringFood)) {
             if (isCarringFood) {
-                if (centerSpot.searchPheromoneVal < Math.max(leftSpot.searchPheromoneVal,
-                        rightSpot.searchPheromoneVal)) {
-                    if (leftSpot.searchPheromoneVal > rightSpot.searchPheromoneVal) {
+                if (centerSpot.value < Math.max(leftSpot.value, rightSpot.value)) {
+                    if (leftSpot.value > rightSpot.value) {
                         turnLeft();
-                    } else if (rightSpot.searchPheromoneVal > leftSpot.searchPheromoneVal) {
+                    } else if (rightSpot.value > leftSpot.value) {
                         turnRight();
                     }
                 }
             } else {
-                if (centerSpot.foodPheromoneVal < Math.max(leftSpot.foodPheromoneVal, rightSpot.foodPheromoneVal)) {
-                    if (leftSpot.foodPheromoneVal > rightSpot.foodPheromoneVal) {
+                if (centerSpot.value < Math.max(leftSpot.value, rightSpot.value)) {
+                    if (leftSpot.value > rightSpot.value) {
                         turnLeft();
-                    } else if (rightSpot.foodPheromoneVal > leftSpot.foodPheromoneVal) {
+                    } else if (rightSpot.value > leftSpot.value) {
                         turnRight();
                     }
                 }
@@ -147,50 +141,39 @@ public class Ant {
     }
 
     private void turnLeft() {
-        double tempX = direction.x;
-        double tempY = direction.y;
-
         // -0.785398 rad = -45 degrees
         // -0.436332 rad = -25 degrees
-        direction.x = (float) (tempX * Math.cos(-0.436332) - tempY * Math.sin(-0.436332));
-        direction.y = (float) (tempX * Math.sin(-0.436332) + tempY * Math.cos(-0.436332));
+        direction.x = (float) (direction.x * Math.cos(-0.436332) - direction.y * Math.sin(-0.436332));
+        direction.y = (float) (direction.x * Math.sin(-0.436332) + direction.y * Math.cos(-0.436332));
     }
 
     private void turnRight() {
-        double tempX = direction.x;
-        double tempY = direction.y;
-
         // 0.785398 rad = 45 degrees
         // 0.436332 rad = 25 degrees
-        direction.x = (float) (tempX * Math.cos(0.436332) - tempY * Math.sin(0.436332));
-        direction.y = (float) (tempX * Math.sin(0.436332) + tempY * Math.cos(0.436332));
+        direction.x = (float) (direction.x * Math.cos(0.436332) - direction.y * Math.sin(0.436332));
+        direction.y = (float) (direction.x * Math.sin(0.436332) + direction.y * Math.cos(0.436332));
     }
 
     private void turnBack() {
-        double tempX = direction.x;
-        double tempY = direction.y;
-
-        direction.x = (float) (tempX * Math.cos(Math.PI) - tempY * Math.sin(Math.PI));
-        direction.y = (float) (tempX * Math.sin(Math.PI) + tempY * Math.cos(Math.PI));
+        direction.x = (float) (direction.x * Math.cos(Math.PI) - direction.y * Math.sin(Math.PI));
+        direction.y = (float) (direction.x * Math.sin(Math.PI) + direction.y * Math.cos(Math.PI));
     }
 
     private boolean lookForPheromones(boolean pheromoneType) {
-        leftSpot.update(direction, this.x, this.y);
-        centerSpot.update(direction, this.x, this.y);
-        rightSpot.update(direction, this.x, this.y);
+        leftSpot.update(direction, this.x, this.y, isCarringFood);
+        centerSpot.update(direction, this.x, this.y, isCarringFood);
+        rightSpot.update(direction, this.x, this.y, isCarringFood);
 
         if (pheromoneType) {
-            if (leftSpot.searchPheromoneVal > 0 || centerSpot.searchPheromoneVal > 0
-                    || rightSpot.searchPheromoneVal > 0) {
+            if (leftSpot.value > 0 || centerSpot.value > 0 || rightSpot.value > 0) {
                 return true;
             }
         } else {
-            if (leftSpot.foodPheromoneVal > 0 || centerSpot.foodPheromoneVal > 0 || rightSpot.foodPheromoneVal > 0) {
+            if (leftSpot.value > 0 || centerSpot.value > 0 || rightSpot.value > 0) {
                 return true;
             }
         }
         return false;
-
     }
 
     private void move() {
@@ -207,17 +190,18 @@ public class Ant {
 
         g.fillRect((int) this.x * scale, (int) this.y * scale, scale, scale);
         // g.setColor(Color.red);
-        // g.fillRect(leftSpot.spotX * scale, leftSpot.spotY * scale , scale, scale);
-        // g.fillRect(rightSpot.spotX * scale, rightSpot.spotY * scale , scale, scale);
-        // g.fillRect(centerSpot.spotX * scale, centerSpot.spotY * scale , scale,
+        // // g.fillRect((int)(this.x * scale + direction.x), (int)(this.y * scale +
+        // // direction.y * scale), scale, scale);
+        // g.fillRect(leftSpot.spotX * scale, leftSpot.spotY * scale, scale, scale);
+        // g.fillRect(rightSpot.spotX * scale, rightSpot.spotY * scale, scale, scale);
+        // g.fillRect(centerSpot.spotX * scale, centerSpot.spotY * scale, scale, scale);
+
         // scale);
         // g.fillRect(detector.leftSpot.x * scale, detector.leftSpot.y * scale, scale,
         // scale);
         // g.fillRect(detector.rightSpot.x * scale, detector.rightSpot.y * scale, scale,
         // scale);
-        // for (Point p : detector.detectorPoints) {
-        // g.fillRect(p.x * scale, p.y * scale, scale, scale);
-        // }
+
     }
 
     private float randomFloat(float min, float max) {
@@ -259,65 +243,60 @@ class Sensor {
     int spotY;
     Vector sensDirection;
     double turnInRads;
-    int foodPheromoneVal;
-    int searchPheromoneVal;
-    double tempDirX;
-    double tempDirY;
+    int value;
     Grid grid;
     float length;
+    int[][] pheromones;
 
-    public Sensor(double rads, Vector antDirection, float x, float y, Grid grid, float length) {
-        foodPheromoneVal = 0;
-        searchPheromoneVal = 0;
+    public Sensor(double rads, Vector antDirection, float x, float y, Grid grid, float length, int scale) {
         this.grid = grid;
         turnInRads = rads;
-        this.length = length;
-        tempDirX = antDirection.x * length;
-        tempDirY = antDirection.y * length;
-        sensDirection = new Vector((float) (tempDirX * Math.cos(rads) - tempDirY * Math.sin(rads)),
-                (float) (tempDirX * Math.sin(rads) + tempDirY * Math.cos(rads)));
+        this.length = length * scale;
+        value = 0;
 
-        this.spotX = (int) (x + sensDirection.x);
-        this.spotY = (int) (y + sensDirection.y);
+        sensDirection = new Vector((float) (antDirection.x * Math.cos(rads) - antDirection.x * Math.sin(rads)),
+                (float) (antDirection.x * Math.sin(rads) + antDirection.x * Math.cos(rads)));
+
+        this.spotX = (int) (x + sensDirection.x * this.length);
+        this.spotY = (int) (y + sensDirection.y * this.length);
     }
 
-    public void update(Vector antDirection, float x, float y) {
-        tempDirX = antDirection.x * length;
-        tempDirY = antDirection.y * length;
+    public void update(Vector antDirection, float x, float y, boolean isCarringFood) {
 
-        this.sensDirection.x = (float) (tempDirX * Math.cos(turnInRads) - tempDirY * Math.sin(turnInRads));
-        this.sensDirection.y = (float) (tempDirX * Math.sin(turnInRads) + tempDirY * Math.cos(turnInRads));
+        this.sensDirection.x = (float) (antDirection.x * Math.cos(turnInRads) - antDirection.y * Math.sin(turnInRads));
+        this.sensDirection.y = (float) (antDirection.x * Math.sin(turnInRads) + antDirection.y * Math.cos(turnInRads));
 
-        this.spotX = (int) (x + sensDirection.x);
-        this.spotY = (int) (y + sensDirection.y);
+        this.spotX = (int) (x + sensDirection.x * this.length);
+        this.spotY = (int) (y + sensDirection.y * this.length);
 
-        foodPheromoneVal = 0;
-        searchPheromoneVal = 0;
+        pheromones = (isCarringFood) ? grid.searchPheromone : grid.foodPheromone;
 
-        if (0 <= spotX && spotX < grid.width && 0 <= spotY && spotY < grid.height) {
-            foodPheromoneVal += grid.foodPheromone[spotX][spotY];
-            searchPheromoneVal += grid.searchPheromone[spotX][spotY];
+        value = 0;
+        getPheromonesInCircle();
+    }
+
+    private void getPheromonesInCircle() {
+        int top = (int) Math.floor(spotY - 1);
+        int bottom = (int) Math.ceil(spotY + 1);
+        int left = (int) Math.floor(spotX - 1);
+        int right = (int) Math.ceil(spotX + 1);
+
+        for (int y = top; y <= bottom; y++) {
+            for (int x = left; x <= right; x++) {
+                if (insideCircle(x, y, 2)) {
+                    if (!grid.outOfBounds(x, y)) {
+                        value += pheromones[x][y];
+                    }
+                }
+            }
         }
+    }
 
-        if (0 <= (spotX + 1) && (spotX + 1) < grid.width && 0 <= spotY && spotY < grid.height) {
-            foodPheromoneVal += grid.foodPheromone[spotX + 1][spotY];
-            searchPheromoneVal += grid.searchPheromone[spotX + 1][spotY];
-        }
-
-        if (0 <= (spotX - 1) && (spotX - 1) < grid.width && 0 <= spotY && spotY < grid.height) {
-            foodPheromoneVal += grid.foodPheromone[spotX - 1][spotY];
-            searchPheromoneVal += grid.searchPheromone[spotX - 1][spotY];
-        }
-
-        if (0 <= spotX && spotX < grid.width && 0 <= (spotY + 1) && (spotY + 1) < grid.height) {
-            foodPheromoneVal += grid.foodPheromone[spotX][spotY + 1];
-            searchPheromoneVal += grid.searchPheromone[spotX][spotY + 1];
-        }
-
-        if (0 <= spotX && spotX < grid.width && 0 <= (spotY - 1) && (spotY - 1) < grid.height) {
-            foodPheromoneVal += grid.foodPheromone[spotX][spotY - 1];
-            searchPheromoneVal += grid.searchPheromone[spotX][spotY - 1];
-        }
+    private boolean insideCircle(int tileX, int tileY, float radius) {
+        float dx = spotX - tileX;
+        float dy = spotY - tileY;
+        float distance_squared = dx * dx + dy * dy;
+        return distance_squared <= radius * radius;
     }
 }
 
@@ -358,7 +337,6 @@ class Detector {
         this.foundPoint = new Point(-1, -1);
         tempDirX = antDirection.x * lenght;
         tempDirY = antDirection.y * length;
-        // detectorPoints = new ArrayList<Point>();
 
         leftVector = new Vector((float) (tempDirX * Math.cos(-angle / 2) - tempDirY * Math.sin(-angle / 2)),
                 (float) (tempDirX * Math.sin(-angle / 2) + tempDirY * Math.cos(-angle / 2)));
@@ -369,7 +347,6 @@ class Detector {
         this.leftSpot = new Point((int) (x + leftVector.x), (int) (y + leftVector.y));
         this.rightSpot = new Point((int) (x + rightVector.x), (int) (y + rightVector.y));
 
-        // setLinePoints(leftSpot.x, leftSpot.y, rightSpot.x, rightSpot.y, grid, type);
     }
 
     public void update(Vector antDirection, float x, float y) {

@@ -31,11 +31,11 @@ public class Grid {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
 
-                foodPheromone[i][j] -= 2;
+                foodPheromone[i][j] -= 3;
                 if (foodPheromone[i][j] < 0)
                     foodPheromone[i][j] = 0;
 
-                searchPheromone[i][j] -= 2;
+                searchPheromone[i][j] -= 3;
                 if (searchPheromone[i][j] < 0)
                     searchPheromone[i][j] = 0;
             }
@@ -55,7 +55,7 @@ public class Grid {
                     g.setColor(new Color(220, 50, 10, foodPheromone[i][j]));
                     g.fillRect(i * scale, j * scale, scale, scale);
                 }
-                if(squareType[i][j] == 2) {
+                if (squareType[i][j] == 2) {
                     g.setColor(Color.green);
                     g.fillRect(i * scale, j * scale, scale, scale);
                 }
@@ -83,7 +83,7 @@ public class Grid {
     }
 
     public void addFood(int x, int y, int size) {
-        //check for collision problem with other types, someday..//
+        // check for collision problem with other types, someday..//
         for (int i = x; i < x + size; i++) {
             for (int j = y; j < y + size; j++) {
                 squareType[i][j] = 2;
@@ -92,15 +92,17 @@ public class Grid {
     }
 
     public boolean outOfBounds(int x, int y) {
-        if(0 < x && x < width && 0 < y && y < height) {
+        if (0 <= x && x < width && 0 <= y && y < height) {
             return false;
         }
         return true;
     }
 
     public boolean checkSquareForObject(int x, int y, int type) {
-        if(squareType[x][y] == type) {
-            return true;
+        if (!outOfBounds(x, y)) {
+            if (squareType[x][y] == type) {
+                return true;
+            }
         }
         return false;
     }
