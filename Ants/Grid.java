@@ -31,13 +31,11 @@ public class Grid {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
 
-                foodPheromone[i][j] -= 0.5f;
-                if (foodPheromone[i][j] < 0)
-                    foodPheromone[i][j] = 0;
+                foodPheromone[i][j] -= 3f;
+                foodPheromone[i][j] = clamp(0, 255, foodPheromone[i][j]);
 
-                searchPheromone[i][j] -= 0.5f;
-                if (searchPheromone[i][j] < 0)
-                    searchPheromone[i][j] = 0;
+                searchPheromone[i][j] -= 3f;
+                searchPheromone[i][j] = clamp(0, 255, searchPheromone[i][j]);
             }
         }
     }
@@ -47,12 +45,12 @@ public class Grid {
             for (int j = 0; j < height; j++) {
                 if (searchPheromone[i][j] > 0) {
                     // light blue
-                    g.setColor(new Color(50, 110, 210, (int)searchPheromone[i][j]));
+                    g.setColor(new Color(50, 110, 210, (int)clamp(0,254,searchPheromone[i][j])));
                     g.fillRect(i * scale, j * scale, scale, scale);
                 }
                 if (foodPheromone[i][j] > 0) {
                     // light red
-                    g.setColor(new Color(220, 50, 10, (int)foodPheromone[i][j]));
+                    g.setColor(new Color(220, 50, 10, (int)clamp(0,254,foodPheromone[i][j])));
                     g.fillRect(i * scale, j * scale, scale, scale);
                 }
                 if (squareType[i][j] == 2) {
@@ -64,14 +62,17 @@ public class Grid {
     }
 
     /** Set pheromone trail 0-search pheromone, 1-food phereomone */
-    public void leaveTrail(int x, int y, int trailType) {
+    public void leaveTrail(int x, int y, int trailType, float power) {
         if (!(x < 0 || x > width - 1 || y < 0 || y > height - 1)) {
             if (trailType == 0) {
-                searchPheromone[x][y] = 254;
+                searchPheromone[x][y] = 254.0f * (float)Math.exp(-0.005 * power);
+                // foodPheromone[x][y] = clamp(0, 254, foodPheromone[x][y]);
             } else if (trailType == 1) {
-                foodPheromone[x][y] = 254;
+                foodPheromone[x][y] = 254.0f * (float)Math.exp(-0.005 * power);
+                // foodPheromone[x][y] = clamp(0, 254, foodPheromone[x][y]);
             }
         }
+        
     }
 
     public void addNest(Nest nest) {
@@ -105,5 +106,12 @@ public class Grid {
             }
         }
         return false;
+    }
+    private float clamp(float min, float max, float val) {
+        if(val < min)
+            val = min;
+        else if(val > max)
+            val = max;
+        return val;
     }
 }

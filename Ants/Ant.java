@@ -15,6 +15,7 @@ public class Ant {
     private Sensor leftSpot, centerSpot, rightSpot;
     private Detector detector;
     private boolean lookingForObjects;
+    private float trailPower;
 
     public Ant(int x, int y, Grid grid, AntSim antSim) {
         this.antSim = antSim;
@@ -25,21 +26,26 @@ public class Ant {
         r = new Random();
         this.direction = new Vector(randomFloat(-1, 1), randomFloat(-1, 1));
         this.direction.normalize();
-        leftSpot = new Sensor(-Math.PI / 7, direction, this.x, this.y, grid, 1.5f, antSim.getScale());
-        centerSpot = new Sensor(0.0, direction, this.x, this.y, grid, 1.5f, antSim.getScale());
-        rightSpot = new Sensor(Math.PI / 7, direction, this.x, this.y, grid, 1.5f, antSim.getScale());
+        leftSpot = new Sensor(-Math.PI / 5, direction, this.x, this.y, grid, 1.0f, antSim.getScale(),1.5f);
+        centerSpot = new Sensor(0.0, direction, this.x, this.y, grid, 1.5f, antSim.getScale(), 1.5f);
+        rightSpot = new Sensor(Math.PI / 5, direction, this.x, this.y, grid, 1.0f, antSim.getScale(),1.5f);
 
-        speed = 2.0f;
-        wanderStrength = 0.3f;
+        speed = 4.0f;
+        wanderStrength = 0.5f;
         this.detector = new Detector(Math.PI / 2, direction, this.x, this.y, 8, grid, Detector.FOOD);
         lookingForObjects = true;
+        trailPower = 0.0f;
     }
 
     void update() {
         if (lookingForObjects) {
             detector.update(direction, this.x, this.y);
             lookForTrails();
-            randomizeDirection();
+
+            // if(!isCarringFood) {
+                randomizeDirection();
+            // }
+            
             lookForObjects();
         } else {
             proximtyDetection();
@@ -47,6 +53,7 @@ public class Ant {
 
         bounceOfWalls();
         move();
+        trailPower += 0.25f;
         leavePheromones();
     }
 
@@ -55,6 +62,7 @@ public class Ant {
             turnBack();
             lookingForObjects = true;
             isCarringFood = !isCarringFood;
+            trailPower = 0.0f;
         }
     }
 
@@ -76,9 +84,9 @@ public class Ant {
 
     private void leavePheromones() {
         if (isCarringFood) {
-            grid.leaveTrail((int) x, (int) y, 1);
+            grid.leaveTrail((int) x, (int) y, 1, trailPower);
         } else {
-            grid.leaveTrail((int) x, (int) y, 0);
+            grid.leaveTrail((int) x, (int) y, 0, trailPower);
         }
     }
 
@@ -143,15 +151,17 @@ public class Ant {
     private void turnLeft() {
         // -0.785398 rad = -45 degrees
         // -0.436332 rad = -25 degrees
-        direction.x = (float) (direction.x * Math.cos(-0.436332) - direction.y * Math.sin(-0.436332));
-        direction.y = (float) (direction.x * Math.sin(-0.436332) + direction.y * Math.cos(-0.436332));
+        direction.x = (float) (direction.x * Math.cos(-Math.PI / 5) - direction.y * Math.sin(-Math.PI / 5));
+        direction.y = (float) (direction.x * Math.sin(-Math.PI / 5) + direction.y * Math.cos(-Math.PI / 5));
+        direction.normalize();
     }
 
     private void turnRight() {
         // 0.785398 rad = 45 degrees
         // 0.436332 rad = 25 degrees
-        direction.x = (float) (direction.x * Math.cos(0.436332) - direction.y * Math.sin(0.436332));
-        direction.y = (float) (direction.x * Math.sin(0.436332) + direction.y * Math.cos(0.436332));
+        direction.x = (float) (direction.x * Math.cos(Math.PI / 5) - direction.y * Math.sin(Math.PI / 5));
+        direction.y = (float) (direction.x * Math.sin(Math.PI / 5) + direction.y * Math.cos(Math.PI / 5));
+        direction.normalize();
     }
 
     private void turnBack() {
@@ -189,19 +199,16 @@ public class Ant {
         }
 
         g.fillRect((int) this.x * scale, (int) this.y * scale, scale, scale);
-        // g.setColor(Color.red);
-        // // g.fillRect((int)(this.x * scale + direction.x), (int)(this.y * scale +
-        // // direction.y * scale), scale, scale);
+        g.setColor(Color.red);
+        // g.fillRect((int)(this.x * scale + direction.x), (int)(this.y * scale +
+        // direction.y * scale), scale, scale);
         // g.fillRect(leftSpot.spotX * scale, leftSpot.spotY * scale, scale, scale);
         // g.fillRect(rightSpot.spotX * scale, rightSpot.spotY * scale, scale, scale);
         // g.fillRect(centerSpot.spotX * scale, centerSpot.spotY * scale, scale, scale);
 
-        // scale);
-        // g.fillRect(detector.leftSpot.x * scale, detector.leftSpot.y * scale, scale,
-        // scale);
-        // g.fillRect(detector.rightSpot.x * scale, detector.rightSpot.y * scale, scale,
-        // scale);
-
+        // leftSpot.testcir(g, scale);
+        // rightSpot.testcir(g, scale);
+        // centerSpot.testcir(g, scale);
     }
 
     private float randomFloat(float min, float max) {
@@ -237,7 +244,7 @@ class Vector {
     }
 }
 
-/** Senses pheromones */
+/** Pheromone sensor */
 class Sensor {
     int spotX;
     int spotY;
@@ -247,12 +254,37 @@ class Sensor {
     Grid grid;
     float length;
     float[][] pheromones;
+    float radius;
 
-    public Sensor(double rads, Vector antDirection, float x, float y, Grid grid, float length, int scale) {
+    public void testcir(Graphics g, int scale) {
+        getPheromonesInCircleg(g, scale);
+
+    }
+
+    private void getPheromonesInCircleg(Graphics g, int scale) {
+
+        int top = (int)Math.floor(spotY - radius);
+        int bottom = (int)Math.ceil(spotY + radius);
+        int left = (int)Math.floor(spotX - radius);
+        int right = (int)Math.ceil(spotX + radius);
+
+        g.fillRect(this.spotX * scale, this.spotY * scale, scale, scale);
+
+        for (int y = top; y <= bottom; y++) {
+            for (int x = left; x <= right; x++) {
+                if (insideCircle(x, y, radius)) {
+                    g.fillRect(x * scale, y * scale, scale, scale);
+                }
+            }
+        }
+    }
+
+    public Sensor(double rads, Vector antDirection, float x, float y, Grid grid, float length, int scale, float radius) {
         this.grid = grid;
         turnInRads = rads;
         this.length = length * scale;
         value = 0;
+        this.radius = radius;
 
         sensDirection = new Vector((float) (antDirection.x * Math.cos(rads) - antDirection.x * Math.sin(rads)),
                 (float) (antDirection.x * Math.sin(rads) + antDirection.x * Math.cos(rads)));
@@ -276,14 +308,14 @@ class Sensor {
     }
 
     private void getPheromonesInCircle() {
-        int top = (int) Math.floor(spotY - 1);
-        int bottom = (int) Math.ceil(spotY + 1);
-        int left = (int) Math.floor(spotX - 1);
-        int right = (int) Math.ceil(spotX + 1);
+        int top = (int) Math.floor(spotY - radius);
+        int bottom = (int) Math.ceil(spotY + radius);
+        int left = (int) Math.floor(spotX - radius);
+        int right = (int) Math.ceil(spotX + radius);
 
         for (int y = top; y <= bottom; y++) {
             for (int x = left; x <= right; x++) {
-                if (insideCircle(x, y, 2)) {
+                if (insideCircle(x, y, radius)) {
                     if (!grid.outOfBounds(x, y)) {
                         value += pheromones[x][y];
                     }

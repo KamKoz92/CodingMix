@@ -19,7 +19,7 @@ public class AntSim extends JPanel implements ActionListener {
     private Nest nest;
 
     public AntSim(int width, int height, int numOfAnts) {
-        scale = 2;
+        scale = 3;
         scaledWidth = width / scale;
         scaledHeight = height / scale;
         this.numOfAnts = numOfAnts;
@@ -37,6 +37,8 @@ public class AntSim extends JPanel implements ActionListener {
         // grid.addFood(500, 50, 25);
         // grid.addFood(50, 250, 25);
         // grid.addFood(500, 250, 25);
+
+        // grid.addFood(350, 200, 25);
     }
 
     private int newRandomInt(int min, int max) {
@@ -61,6 +63,7 @@ public class AntSim extends JPanel implements ActionListener {
         for (Ant a : ants) {
             a.draw(g, scale);
         }
+        //drawC(new Point(150, 150), 2.0f, g);
         super.repaint();
     }
 
