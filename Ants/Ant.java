@@ -246,7 +246,7 @@ class Sensor {
     int value;
     Grid grid;
     float length;
-    int[][] pheromones;
+    float[][] pheromones;
 
     public Sensor(double rads, Vector antDirection, float x, float y, Grid grid, float length, int scale) {
         this.grid = grid;

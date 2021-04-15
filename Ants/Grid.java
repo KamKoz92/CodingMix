@@ -4,8 +4,8 @@ import java.awt.Graphics;
 public class Grid {
     public int width;
     public int height;
-    public int[][] searchPheromone;
-    public int[][] foodPheromone;
+    public float[][] searchPheromone;
+    public float[][] foodPheromone;
     /** 0 - free square, 1 - nest, 2 -food */
     public int[][] squareType;
     private int scale;
@@ -14,8 +14,8 @@ public class Grid {
         this.width = width;
         this.height = height;
         this.scale = scale;
-        searchPheromone = new int[width][height];
-        foodPheromone = new int[width][height];
+        searchPheromone = new float[width][height];
+        foodPheromone = new float[width][height];
         squareType = new int[width][height];
 
         for (int i = 0; i < width; i++) {
@@ -31,11 +31,11 @@ public class Grid {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
 
-                foodPheromone[i][j] -= 3;
+                foodPheromone[i][j] -= 0.5f;
                 if (foodPheromone[i][j] < 0)
                     foodPheromone[i][j] = 0;
 
-                searchPheromone[i][j] -= 3;
+                searchPheromone[i][j] -= 0.5f;
                 if (searchPheromone[i][j] < 0)
                     searchPheromone[i][j] = 0;
             }
@@ -47,12 +47,12 @@ public class Grid {
             for (int j = 0; j < height; j++) {
                 if (searchPheromone[i][j] > 0) {
                     // light blue
-                    g.setColor(new Color(50, 110, 210, searchPheromone[i][j]));
+                    g.setColor(new Color(50, 110, 210, (int)searchPheromone[i][j]));
                     g.fillRect(i * scale, j * scale, scale, scale);
                 }
                 if (foodPheromone[i][j] > 0) {
                     // light red
-                    g.setColor(new Color(220, 50, 10, foodPheromone[i][j]));
+                    g.setColor(new Color(220, 50, 10, (int)foodPheromone[i][j]));
                     g.fillRect(i * scale, j * scale, scale, scale);
                 }
                 if (squareType[i][j] == 2) {

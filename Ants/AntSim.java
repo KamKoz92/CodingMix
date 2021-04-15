@@ -34,9 +34,9 @@ public class AntSim extends JPanel implements ActionListener {
         }
 
         grid.addFood(50, 50, 25);
-        grid.addFood(500, 50, 25);
-        grid.addFood(50, 250, 25);
-        grid.addFood(500, 250, 25);
+        // grid.addFood(500, 50, 25);
+        // grid.addFood(50, 250, 25);
+        // grid.addFood(500, 250, 25);
     }
 
     private int newRandomInt(int min, int max) {
