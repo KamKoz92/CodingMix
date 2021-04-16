@@ -16,7 +16,9 @@ public class Ant {
     private Detector detector;
     private boolean lookingForObjects;
     private float trailPower;
-
+    /**
+     * try smaller sensors, overlaping senors trail tracking is bad 
+     */
     public Ant(int x, int y, Grid grid, AntSim antSim) {
         this.antSim = antSim;
         this.x = x;
@@ -42,9 +44,9 @@ public class Ant {
             detector.update(direction, this.x, this.y);
             lookForTrails();
 
-            // if(!isCarringFood) {
+            if(!isCarringFood) {
                 randomizeDirection();
-            // }
+            }
             
             lookForObjects();
         } else {

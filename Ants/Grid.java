@@ -31,10 +31,10 @@ public class Grid {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
 
-                foodPheromone[i][j] -= 3f;
+                foodPheromone[i][j] -= 1f;
                 foodPheromone[i][j] = clamp(0, 255, foodPheromone[i][j]);
 
-                searchPheromone[i][j] -= 3f;
+                searchPheromone[i][j] -= 1f;
                 searchPheromone[i][j] = clamp(0, 255, searchPheromone[i][j]);
             }
         }
