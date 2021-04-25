@@ -39,10 +39,15 @@ void Player::update()
     velY += gravity;
     if (velY > maxSpeed)
     {
-        velY = maxSpeed;
+        setVelocity(maxSpeed);
     }
 
     yPos += velY;
+
+    if(yPos < 0) {
+        yPos = 0;
+        setVelocity(0);
+    }
     dstRect.y = yPos;
 }
 
