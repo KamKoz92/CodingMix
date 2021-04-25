@@ -40,10 +40,14 @@ void Background::render()
     {
         TextureManager::Draw(nightTex, backgroundRect, backgroundDst);
     }
+
+    baseRect.x++;
+    if(baseRect.x > 47) baseRect.x = 0;
     TextureManager::Draw(base, baseRect, baseDst);
-}   
+}
 
 
-SDL_Rect Background::getCollider() {
+SDL_Rect Background::getCollider()
+{
     return baseDst;
 }

@@ -9,6 +9,7 @@ Player *player = nullptr;
 Background *background;
 SDL_Texture* Pipe::PIPE_TEX = nullptr;
 
+
 Game::Game()
 {
 }
