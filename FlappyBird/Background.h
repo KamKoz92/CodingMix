@@ -9,6 +9,7 @@ class Background
     SDL_Texture *base;
     SDL_Rect baseRect, backgroundRect;
     SDL_Rect baseDst, backgroundDst;
+    
 
 public:
     Background();

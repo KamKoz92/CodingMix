@@ -54,7 +54,7 @@ void Player::update()
 
 void Player::render()
 {
-    TextureManager::Draw(playerTexture, srcRect, dstRect, 180);
+    TextureManager::Draw(playerTexture, srcRect, dstRect, 0);
 }
 
 SDL_Rect Player::getCollider()

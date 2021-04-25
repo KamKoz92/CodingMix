@@ -7,7 +7,6 @@
 #include "TextureManager.h"
 #include "Background.h"
 #include "Collider.h"
-#include "Pipe.h"
 #include <iostream>
 #include <vector>
 
@@ -19,6 +18,7 @@ class Game
 public:
     static SDL_Renderer *renderer;
     static SDL_Event event;
+    static SDL_Texture *pipeTexture;
     static bool isRunning;
 
     Game();
