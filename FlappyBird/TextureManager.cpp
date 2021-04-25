@@ -7,7 +7,8 @@ SDL_Texture *TextureManager::LoadTexture(const char *filename)
     SDL_FreeSurface(tempSurface);
     return texture;
 }
-void TextureManager::Draw(SDL_Texture *texture, SDL_Rect src, SDL_Rect dst)
+void TextureManager::Draw(SDL_Texture *texture, SDL_Rect src, SDL_Rect dst, double angle)
 {
     SDL_RenderCopy(Game::renderer, texture, &src, &dst);
+    SDL_RenderCopyEx(Game::renderer, texture, &src, &dst, angle, NULL, SDL_FLIP_NONE);
 }

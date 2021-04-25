@@ -5,6 +5,6 @@
 class TextureManager
 {
 public:
-    static SDL_Texture* LoadTexture(const char* filename);
-    static void Draw(SDL_Texture* texture, SDL_Rect src, SDL_Rect dst);
+    static SDL_Texture *LoadTexture(const char *filename);
+    static void Draw(SDL_Texture *texture, SDL_Rect src, SDL_Rect dst, double angle);
 };

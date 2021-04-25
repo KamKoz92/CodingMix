@@ -34,18 +34,18 @@ void Background::render()
 {
     if (state)
     {
-        TextureManager::Draw(dayTex, backgroundRect, backgroundDst);
+        TextureManager::Draw(dayTex, backgroundRect, backgroundDst, 0);
     }
     else
     {
-        TextureManager::Draw(nightTex, backgroundRect, backgroundDst);
+        TextureManager::Draw(nightTex, backgroundRect, backgroundDst, 0);
     }
 
     baseRect.x++;
-    if(baseRect.x > 47) baseRect.x = 0;
-    TextureManager::Draw(base, baseRect, baseDst);
+    if (baseRect.x > 47)
+        baseRect.x = 0;
+    TextureManager::Draw(base, baseRect, baseDst, 0);
 }
-
 
 SDL_Rect Background::getCollider()
 {

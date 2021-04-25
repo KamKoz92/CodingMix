@@ -6,7 +6,6 @@ Pipe::Pipe()
     this->src.y = 0;
     SDL_QueryTexture(Pipe::PIPE_TEX, NULL, NULL, &this->src.w, &this->src.h);
 
-
     this->dst.x = 0;
     this->dst.y = 0;
     this->dst.w = src.w;
@@ -27,5 +26,5 @@ void Pipe::update()
 }
 void Pipe::render()
 {
-    TextureManager::Draw(Pipe::PIPE_TEX,this->src, this->dst);
+    TextureManager::Draw(Pipe::PIPE_TEX, this->src, this->dst, 0);
 }

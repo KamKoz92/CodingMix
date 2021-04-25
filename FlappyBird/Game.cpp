@@ -7,8 +7,7 @@ SDL_Event Game::event;
 bool Game::isRunning = false;
 Player *player = nullptr;
 Background *background;
-SDL_Texture* Pipe::PIPE_TEX = nullptr;
-
+SDL_Texture *Pipe::PIPE_TEX = nullptr;
 
 Game::Game()
 {
@@ -32,7 +31,7 @@ void Game::initalize(const char *title, int xpos, int ypos, int width, int heigh
         if (window)
         {
             cout << "Window Created!" << endl;
-            SDL_Surface* tempSurf = IMG_Load("assets/sprites/icon.png");
+            SDL_Surface *tempSurf = IMG_Load("assets/sprites/icon.png");
             SDL_SetWindowIcon(window, tempSurf);
             SDL_FreeSurface(tempSurf);
         }
@@ -47,7 +46,6 @@ void Game::initalize(const char *title, int xpos, int ypos, int width, int heigh
         player = new Player(50.0f, 100.0f);
         background = new Background();
         Pipe::PIPE_TEX = TextureManager::LoadTexture("assets/sprites/pipe-green.png");
-
     }
 }
 

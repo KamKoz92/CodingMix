@@ -6,14 +6,14 @@ class Player
 {
     SDL_Texture *playerTexture;
     SDL_Rect srcRect, dstRect;
-    SDL_Renderer* renderer;
+    SDL_Renderer *renderer;
     float xPos;
     float yPos;
     float velY;
     float maxSpeed;
     float gravity;
 
-    SDL_Texture* frames[3];
+    SDL_Texture *frames[3];
     int frameSpeed;
     int numOfFrames;
     int currentFrame;
@@ -27,5 +27,5 @@ public:
     SDL_Rect getCollider();
     void setMaxSpeed(float mS);
     void setTextures();
-    SDL_Texture* getCurrentFrame();
+    SDL_Texture *getCurrentFrame();
 };
