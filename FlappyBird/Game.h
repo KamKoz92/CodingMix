@@ -8,7 +8,7 @@
 #include "Background.h"
 #include "Collider.h"
 #include <iostream>
-#include <vector>
+
 
 class Game
 {
@@ -18,7 +18,6 @@ class Game
 public:
     static SDL_Renderer *renderer;
     static SDL_Event event;
-    static SDL_Texture *pipeTexture;
     static bool isRunning;
 
     Game();
