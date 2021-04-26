@@ -3,6 +3,7 @@
 Background::Background()
 {
     state = false;
+
     dayTex = TextureManager::LoadTexture("assets/sprites/background-day.png");
     nightTex = TextureManager::LoadTexture("assets/sprites/background-night.png");
     base = TextureManager::LoadTexture("assets/sprites/base.png");
@@ -22,6 +23,7 @@ Background::Background()
     SDL_QueryTexture(base, NULL, NULL, NULL, &baseSrc.h);
     baseSrc.w = backgroundSrc.w;
 
+    std::cout << backgroundSrc.w << std::endl;
     baseDst.x = 0;
     baseDst.y = backgroundSrc.h - 112;
     baseDst.w = baseSrc.w;
@@ -37,10 +39,10 @@ Background::Background()
     pipeDst.w = 0;
     pipeDst.h = 0;
 
-
     maxGates = 3;
+
     for(int i = 0; i < maxGates; i++) {
-        gates.push_back(Gate(200 + (i * 140), 125, pipeSrc.w, 75, backgroundSrc.h - baseSrc.h));
+        gates.push_back(Gate(200 + (i * 120), 125, pipeSrc.w, 75, backgroundSrc.h - baseSrc.h));
     }
     
 }
@@ -77,10 +79,10 @@ void Background::drawGate()
     {
         Gate tempGate = gates[i];
 
-        pipeSrc.h = tempGate.areaH - (tempGate.gap.h + tempGate.gap.y);
+        pipeSrc.h = tempGate.gap.y;
         TextureManager::Draw(pipe, pipeSrc, tempGate.upperPipe, 180);
 
-        pipeSrc.h = tempGate.gap.y;
+        pipeSrc.h = tempGate.areaH - (tempGate.gap.h + tempGate.gap.y);
         TextureManager::Draw(pipe, pipeSrc, tempGate.lowerPipe, 0);
     }
 }
@@ -92,8 +94,8 @@ void Background::update()
 
         if((gates[i].gap.x + gates[i].gap.w) < 0) {
 
-            gates[i].changeGap(backgroundSrc.w + pipeSrc.w,0);
-            std::cout << "gate closed" << std::endl;
+            gates[i].changeGap(backgroundSrc.w + pipeSrc.w + 20, 0);
         }
     }
 }
+
