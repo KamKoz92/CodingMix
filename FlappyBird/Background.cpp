@@ -23,7 +23,6 @@ Background::Background()
     SDL_QueryTexture(base, NULL, NULL, NULL, &baseSrc.h);
     baseSrc.w = backgroundSrc.w;
 
-    std::cout << backgroundSrc.w << std::endl;
     baseDst.x = 0;
     baseDst.y = backgroundSrc.h - 112;
     baseDst.w = baseSrc.w;
@@ -41,10 +40,12 @@ Background::Background()
 
     maxGates = 3;
 
-    for(int i = 0; i < maxGates; i++) {
-        gates.push_back(Gate(200 + (i * 120), 125, pipeSrc.w, 75, backgroundSrc.h - baseSrc.h));
+    for (int i = 0; i < maxGates; i++)
+    {
+        gates.push_back(Gate(200 + (i * 120), 150, pipeSrc.w, 125, backgroundSrc.h - baseSrc.h));
     }
-    
+
+    srand(time(NULL));
 }
 
 Background::~Background()
@@ -54,18 +55,18 @@ void Background::render()
 {
     if (state)
     {
-        TextureManager::Draw(dayTex, backgroundSrc, backgroundDst, 0);
+        TextureManager::Draw(dayTex, backgroundSrc, backgroundDst, 0, SDL_FLIP_NONE);
     }
     else
     {
-        TextureManager::Draw(nightTex, backgroundSrc, backgroundDst, 0);
+        TextureManager::Draw(nightTex, backgroundSrc, backgroundDst, 0, SDL_FLIP_NONE);
     }
     drawGate();
 
-    baseSrc.x++;
+    baseSrc.x += 2;
     if (baseSrc.x > 47)
         baseSrc.x = 0;
-    TextureManager::Draw(base, baseSrc, baseDst, 0);
+    TextureManager::Draw(base, baseSrc, baseDst, 0, SDL_FLIP_NONE);
 }
 
 SDL_Rect Background::getCollider()
@@ -79,23 +80,24 @@ void Background::drawGate()
     {
         Gate tempGate = gates[i];
 
-        pipeSrc.h = tempGate.gap.y;
-        TextureManager::Draw(pipe, pipeSrc, tempGate.upperPipe, 180);
+        pipeSrc.h = tempGate.upperPipe.h;
+        TextureManager::Draw(pipe, pipeSrc, tempGate.upperPipe, 0, SDL_FLIP_VERTICAL);
 
-        pipeSrc.h = tempGate.areaH - (tempGate.gap.h + tempGate.gap.y);
-        TextureManager::Draw(pipe, pipeSrc, tempGate.lowerPipe, 0);
+        pipeSrc.h = tempGate.lowerPipe.h;
+        TextureManager::Draw(pipe, pipeSrc, tempGate.lowerPipe, 0, SDL_FLIP_NONE);
     }
 }
 
 void Background::update()
 {
-    for(int i = 0; i < gates.size(); i++) {
-        gates[i].changeGap(-1,0);
+    for (int i = 0; i < gates.size(); i++)
+    {
+        gates[i].changeGap(-2, 0);
 
-        if((gates[i].gap.x + gates[i].gap.w) < 0) {
+        if ((gates[i].gap.x + gates[i].gap.w) < 0)
+        {
+            gates[i].changeGap(backgroundSrc.w + pipeSrc.w + 20, -5);
 
-            gates[i].changeGap(backgroundSrc.w + pipeSrc.w + 20, 0);
         }
     }
 }
-

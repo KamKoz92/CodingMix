@@ -18,7 +18,7 @@ Player::Player(float x, float y)
     dstRect.h = srcRect.h;
 
     gravity = 0.3f;
-    maxSpeed = 10.0f;
+    maxSpeed = 8.0f;
     setVelocity(0);
 }
 
@@ -54,7 +54,7 @@ void Player::update()
 
 void Player::render()
 {
-    TextureManager::Draw(playerTexture, srcRect, dstRect, 0);
+    TextureManager::Draw(playerTexture, srcRect, dstRect, 0, SDL_FLIP_NONE);
 }
 
 SDL_Rect Player::getCollider()

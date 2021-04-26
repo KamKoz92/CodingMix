@@ -2,6 +2,7 @@
 
 #include "Game.h"
 
+
 struct Gate
 {
     SDL_Rect gap, upperPipe, lowerPipe;
@@ -33,5 +34,15 @@ struct Gate
         upperPipe.x += x;
         gap.x += x;
         lowerPipe.x += x;
+
+        if (y != 0)
+        {
+            upperPipe.h += y;
+            gap.y += y;
+
+            lowerPipe.y += y;
+            lowerPipe.h -= y;
+
+        }
     }
 };

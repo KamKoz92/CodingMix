@@ -2,6 +2,8 @@
 #include "Game.h"
 #include "Gate.h"
 #include <vector>
+#include <stdlib.h>
+#include <time.h>
 
 class Background
 {
@@ -14,7 +16,7 @@ class Background
     SDL_Rect baseDst, backgroundDst, pipeDst;
     std::vector<Gate> gates;
     int maxGates;
-    
+
 public:
     Background();
     ~Background();

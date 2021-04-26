@@ -75,7 +75,7 @@ void Game::keyBoardUpdate()
     {
         if (event.key.keysym.sym == SDLK_SPACE)
         {
-            player->setVelocity(-8);
+            player->setVelocity(-5);
         }
     }
 }

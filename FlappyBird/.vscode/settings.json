@@ -40,7 +40,12 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "cinttypes": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "map": "cpp",
+        "numeric": "cpp",
+        "random": "cpp"
     },
     "githubPullRequests.showInSCM": true,
     "C_Cpp.errorSquiggles": "Enabled"
