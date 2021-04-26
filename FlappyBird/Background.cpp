@@ -40,7 +40,7 @@ Background::Background()
 
     maxGates = 3;
     for(int i = 0; i < maxGates; i++) {
-        gates.push_back(Gate(200 + (i * 140), 125, 50, 50, backgroundSrc.h - baseSrc.h));
+        gates.push_back(Gate(200 + (i * 140), 125, pipeSrc.w, 75, backgroundSrc.h - baseSrc.h));
     }
     
 }
@@ -78,29 +78,22 @@ void Background::drawGate()
         Gate tempGate = gates[i];
 
         pipeSrc.h = tempGate.areaH - (tempGate.gap.h + tempGate.gap.y);
-
-        pipeDst.x = tempGate.gap.x;
-        pipeDst.y = tempGate.gap.h + tempGate.gap.y;
-        pipeDst.w = pipeSrc.w;
-        pipeDst.h = pipeSrc.h;
-        TextureManager::Draw(pipe, pipeSrc, pipeDst, 0);
+        TextureManager::Draw(pipe, pipeSrc, tempGate.upperPipe, 180);
 
         pipeSrc.h = tempGate.gap.y;
-
-        pipeDst.x = tempGate.gap.x;
-        pipeDst.y = 0;
-        pipeDst.w = pipeSrc.w;
-        pipeDst.h = tempGate.gap.y;
-        TextureManager::Draw(pipe, pipeSrc, pipeDst, 180);
+        TextureManager::Draw(pipe, pipeSrc, tempGate.lowerPipe, 0);
     }
 }
 
 void Background::update()
 {
     for(int i = 0; i < gates.size(); i++) {
-        gates[i].gap.x--;
+        gates[i].changeGap(-1,0);
+
         if((gates[i].gap.x + gates[i].gap.w) < 0) {
-            gates[i].gap.x = gates.back().gap.x + 140;
+
+            gates[i].changeGap(backgroundSrc.w + pipeSrc.w,0);
+            std::cout << "gate closed" << std::endl;
         }
     }
 }
