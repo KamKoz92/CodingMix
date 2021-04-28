@@ -8,7 +8,7 @@
 #include "Background.h"
 #include "Collider.h"
 #include <iostream>
-
+#include "Score.h"
 
 class Game
 {

@@ -12,21 +12,25 @@ class Player
     float yPos;
     float velY;
     float maxSpeed;
+    float minSpeed;
     float gravity;
 
     SDL_Texture *frames[4];
     int frameSpeed;
     int numOfFrames;
     int currentFrame;
+    double pitchAngle;
 
 public:
     Player(float x, float y);
     ~Player();
-    void update();
+    void updatePosition();
+    void updateFrame();
     void render();
     void setVelocity(float velY);
+    void setMinVelocity();
     SDL_Rect getCollider();
     void setMaxSpeed(float mS);
     void setTextures();
-    SDL_Texture *getCurrentFrame();
+    void setCurrentFrame();
 };

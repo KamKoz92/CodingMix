@@ -1,6 +1,6 @@
 #include "Background.h"
 
-Background::Background()
+Background::Background(int scorePoint)
 {
     state = false;
 
@@ -8,6 +8,7 @@ Background::Background()
     nightTex = TextureManager::LoadTexture("assets/sprites/background-night.png");
     base = TextureManager::LoadTexture("assets/sprites/base.png");
     pipe = TextureManager::LoadTexture("assets/sprites/pipe-green.png");
+    menu = TextureManager::LoadTexture("assets/sprites/message.png");
 
     backgroundSrc.x = 0;
     backgroundSrc.y = 0;
@@ -38,6 +39,15 @@ Background::Background()
     pipeDst.w = 0;
     pipeDst.h = 0;
 
+    menuSrc.x = 0;
+    menuSrc.y = 0;
+    SDL_QueryTexture(menu, NULL, NULL, &menuSrc.w, &menuSrc.h);
+
+    menuDst.x = (backgroundDst.w - menuSrc.w) / 2;
+    menuDst.y = (backgroundDst.h - menuSrc.h) / 2;
+    menuDst.w = menuSrc.w;
+    menuDst.h = menuSrc.h;
+
     maxGates = 3;
 
     for (int i = 0; i < maxGates; i++)
@@ -46,6 +56,8 @@ Background::Background()
     }
 
     srand(time(NULL));
+    score = new Score(backgroundSrc.w, backgroundSrc.h);
+    this->scorePoint = scorePoint;
 }
 
 Background::~Background()
@@ -62,9 +74,16 @@ void Background::render()
         TextureManager::Draw(nightTex, backgroundSrc, backgroundDst, 0, SDL_FLIP_NONE);
     }
     drawGate();
-
-    
     TextureManager::Draw(base, baseSrc, baseDst, 0, SDL_FLIP_NONE);
+}
+
+void Background::renderScore()
+{
+    score->render();
+}
+void Background::renderMenu()
+{
+    TextureManager::Draw(menu, menuSrc, menuDst, 0, SDL_FLIP_NONE);
 }
 
 SDL_Rect Background::getCollider()
@@ -91,7 +110,7 @@ void Background::update()
     baseSrc.x += 2;
     if (baseSrc.x > 47)
         baseSrc.x = 0;
-        
+
     for (int i = 0; i < gates.size(); i++)
     {
         gates[i].moveGateHorizon(-2);

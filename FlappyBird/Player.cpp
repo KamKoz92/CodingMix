@@ -5,7 +5,7 @@
 Player::Player(float x, float y)
 {
     setTextures();
-
+    pitchAngle = 0;
     xPos = x;
     yPos = y;
     srcRect.x = 0;
@@ -19,6 +19,7 @@ Player::Player(float x, float y)
 
     gravity = 0.3f;
     maxSpeed = 8.0f;
+    minSpeed = -5.0f;
     setVelocity(0);
 }
 
@@ -30,34 +31,35 @@ void Player::setVelocity(float velY)
 {
     this->velY = velY;
 }
-
-void Player::update()
+void Player::setMinVelocity()
 {
-    if (true)
+    setVelocity(minSpeed);
+}
+
+void Player::updatePosition()
+{
+    velY += gravity;
+    if (velY > maxSpeed)
     {
-        velY += gravity;
-        if (velY > maxSpeed)
-        {
-            setVelocity(maxSpeed);
-        }
-
-        yPos += velY;
-
-        if (yPos < 0)
-        {
-            yPos = 0;
-            setVelocity(0);
-        }
-        dstRect.y = yPos;
+        setVelocity(maxSpeed);
     }
-
+    yPos += velY;
+    if (yPos < 0)
+    {
+        yPos = 0;
+        setVelocity(0);
+    }
+    dstRect.y = yPos;
+}
+void Player::updateFrame()
+{
     currentFrame = ((SDL_GetTicks() / frameSpeed) % numOfFrames);
-    playerTexture = getCurrentFrame();
+    setCurrentFrame();
 }
 
 void Player::render()
 {
-    TextureManager::Draw(playerTexture, srcRect, dstRect, 0, SDL_FLIP_NONE);
+    TextureManager::Draw(playerTexture, srcRect, dstRect, pitchAngle, SDL_FLIP_NONE);
 }
 
 SDL_Rect Player::getCollider()
@@ -77,12 +79,24 @@ void Player::setTextures()
     frames[2] = TextureManager::LoadTexture("assets/sprites/bluebird-upflap.png");
     frames[3] = frames[1];
     numOfFrames = 4;
-    frameSpeed = 150;
+    frameSpeed = 100;
     currentFrame = 0;
-    playerTexture = getCurrentFrame();
+    setCurrentFrame();
 }
 
-SDL_Texture *Player::getCurrentFrame()
+void Player::setCurrentFrame()
 {
-    return frames[currentFrame];
+    playerTexture = frames[currentFrame];
 }
+
+
+//setting bird pitchangle
+// if (velY > 2.99)
+// {
+//     double A = 5.0;
+//     double B = maxSpeed;
+//     double C = -30.0;
+//     double D = 90.0;
+
+//     pitchAngle = (velY - A) / (B - A) * (D - C) + C;
+// }

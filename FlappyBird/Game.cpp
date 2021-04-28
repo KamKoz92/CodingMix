@@ -42,8 +42,8 @@ void Game::initalize(const char *title, int xpos, int ypos, int width, int heigh
         }
         isRunning = true;
 
-        player = new Player(50.0f, 150.0f);
-        background = new Background();
+        player = new Player(50.0f, 175.0f);
+        background = new Background(50);
         gameState = STATE::PAUSE;
     }
 }
@@ -66,11 +66,11 @@ void Game::update()
     if (gameState == STATE::GAME)
     {
         background->update();
+        player->updatePosition();
         checkColliders();
-     
     }
     keyBoardUpdate();
-    player->update();
+    player->updateFrame();
 }
 void Game::keyBoardUpdate()
 {
@@ -83,9 +83,9 @@ void Game::keyBoardUpdate()
             {
                 setGameState(STATE::GAME);
             }
-            else if(getGameState() == STATE::GAME)
+            else if (getGameState() == STATE::GAME)
             {
-                player->setVelocity(-5);
+                player->setMinVelocity();
             }
         }
     }
@@ -94,6 +94,15 @@ void Game::render()
 {
     SDL_RenderClear(renderer);
     background->render();
+    if (gameState == STATE::PAUSE)
+    {
+        background->renderMenu();
+    }
+    else if (gameState == STATE::GAME)
+    {
+        background->renderScore();
+    }
+
     player->render();
     SDL_RenderPresent(renderer);
 }
