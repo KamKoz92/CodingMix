@@ -2,7 +2,6 @@
 
 #include "Game.h"
 
-
 struct Gate
 {
     SDL_Rect gap, upperPipe, lowerPipe;
@@ -29,20 +28,17 @@ struct Gate
     ~Gate()
     {
     }
-    void changeGap(int x, int y)
+    void moveGateHorizon(int x)
     {
         upperPipe.x += x;
         gap.x += x;
         lowerPipe.x += x;
-
-        if (y != 0)
-        {
-            upperPipe.h += y;
-            gap.y += y;
-
-            lowerPipe.y += y;
-            lowerPipe.h -= y;
-
-        }
+    }
+    void moveGateVertical(int y)
+    {
+        upperPipe.h = 150 + (y * 25);
+        gap.y = 150 + (y * 15);
+        lowerPipe.y = gap.h + 150 + (y * 25);
+        lowerPipe.h = areaH - (gap.h + (150 + (y * 25)));
     }
 };

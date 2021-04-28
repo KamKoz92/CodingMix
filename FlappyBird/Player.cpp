@@ -33,23 +33,26 @@ void Player::setVelocity(float velY)
 
 void Player::update()
 {
+    if (true)
+    {
+        velY += gravity;
+        if (velY > maxSpeed)
+        {
+            setVelocity(maxSpeed);
+        }
+
+        yPos += velY;
+
+        if (yPos < 0)
+        {
+            yPos = 0;
+            setVelocity(0);
+        }
+        dstRect.y = yPos;
+    }
+
     currentFrame = ((SDL_GetTicks() / frameSpeed) % numOfFrames);
     playerTexture = getCurrentFrame();
-
-    velY += gravity;
-    if (velY > maxSpeed)
-    {
-        setVelocity(maxSpeed);
-    }
-
-    yPos += velY;
-
-    if (yPos < 0)
-    {
-        yPos = 0;
-        setVelocity(0);
-    }
-    dstRect.y = yPos;
 }
 
 void Player::render()
@@ -72,7 +75,8 @@ void Player::setTextures()
     frames[0] = TextureManager::LoadTexture("assets/sprites/bluebird-downflap.png");
     frames[1] = TextureManager::LoadTexture("assets/sprites/bluebird-midflap.png");
     frames[2] = TextureManager::LoadTexture("assets/sprites/bluebird-upflap.png");
-    numOfFrames = 3;
+    frames[3] = frames[1];
+    numOfFrames = 4;
     frameSpeed = 150;
     currentFrame = 0;
     playerTexture = getCurrentFrame();

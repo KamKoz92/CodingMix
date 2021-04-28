@@ -19,6 +19,13 @@ public:
     static SDL_Renderer *renderer;
     static SDL_Event event;
     static bool isRunning;
+    enum STATE
+    {
+        GAME,
+        PAUSE,
+        ENDGAME
+    };
+    STATE gameState;
 
     Game();
     ~Game();
@@ -33,6 +40,8 @@ public:
     }
     void keyBoardUpdate();
     void checkColliders();
+    STATE getGameState();
+    void setGameState(STATE state);
 };
 
 #endif

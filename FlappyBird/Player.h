@@ -2,6 +2,7 @@
 
 #include "Game.h"
 
+
 class Player
 {
     SDL_Texture *playerTexture;
@@ -13,7 +14,7 @@ class Player
     float maxSpeed;
     float gravity;
 
-    SDL_Texture *frames[3];
+    SDL_Texture *frames[4];
     int frameSpeed;
     int numOfFrames;
     int currentFrame;

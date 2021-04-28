@@ -8,7 +8,6 @@ bool Game::isRunning = false;
 Player *player = nullptr;
 Background *background;
 
-
 Game::Game()
 {
 }
@@ -45,7 +44,7 @@ void Game::initalize(const char *title, int xpos, int ypos, int width, int heigh
 
         player = new Player(50.0f, 150.0f);
         background = new Background();
-        
+        gameState = STATE::PAUSE;
     }
 }
 
@@ -64,10 +63,14 @@ void Game::handleEvents()
 }
 void Game::update()
 {
-    checkColliders();
+    if (gameState == STATE::GAME)
+    {
+        background->update();
+        checkColliders();
+     
+    }
     keyBoardUpdate();
     player->update();
-    background->update();
 }
 void Game::keyBoardUpdate()
 {
@@ -75,7 +78,15 @@ void Game::keyBoardUpdate()
     {
         if (event.key.keysym.sym == SDLK_SPACE)
         {
-            player->setVelocity(-5);
+
+            if (getGameState() == STATE::PAUSE)
+            {
+                setGameState(STATE::GAME);
+            }
+            else if(getGameState() == STATE::GAME)
+            {
+                player->setVelocity(-5);
+            }
         }
     }
 }
@@ -105,4 +116,13 @@ void Game::checkColliders()
     {
         player->setMaxSpeed(10.0f);
     }
+}
+
+Game::STATE Game::getGameState()
+{
+    return gameState;
+}
+void Game::setGameState(Game::STATE state)
+{
+    gameState = state;
 }

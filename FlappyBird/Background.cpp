@@ -42,7 +42,7 @@ Background::Background()
 
     for (int i = 0; i < maxGates; i++)
     {
-        gates.push_back(Gate(200 + (i * 120), 150, pipeSrc.w, 125, backgroundSrc.h - baseSrc.h));
+        gates.push_back(Gate(300 + (i * 120), 150, pipeSrc.w, 125, backgroundSrc.h - baseSrc.h));
     }
 
     srand(time(NULL));
@@ -63,9 +63,7 @@ void Background::render()
     }
     drawGate();
 
-    baseSrc.x += 2;
-    if (baseSrc.x > 47)
-        baseSrc.x = 0;
+    
     TextureManager::Draw(base, baseSrc, baseDst, 0, SDL_FLIP_NONE);
 }
 
@@ -90,14 +88,18 @@ void Background::drawGate()
 
 void Background::update()
 {
+    baseSrc.x += 2;
+    if (baseSrc.x > 47)
+        baseSrc.x = 0;
+        
     for (int i = 0; i < gates.size(); i++)
     {
-        gates[i].changeGap(-2, 0);
+        gates[i].moveGateHorizon(-2);
 
         if ((gates[i].gap.x + gates[i].gap.w) < 0)
         {
-            gates[i].changeGap(backgroundSrc.w + pipeSrc.w + 20, -5);
-
+            gates[i].moveGateHorizon(backgroundSrc.w + pipeSrc.w + 20);
+            gates[i].moveGateVertical(rand() % 7 - 3);
         }
     }
 }
