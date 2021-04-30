@@ -4,6 +4,8 @@
 
 Player::Player(float x, float y)
 {
+    startingX = x;
+    startingY = y;
     setTextures();
     pitchAngle = 0;
     xPos = x;
@@ -50,6 +52,8 @@ void Player::updatePosition()
         setVelocity(0);
     }
     dstRect.y = yPos;
+
+    
 }
 void Player::updateFrame()
 {
@@ -89,14 +93,9 @@ void Player::setCurrentFrame()
     playerTexture = frames[currentFrame];
 }
 
-
-//setting bird pitchangle
-// if (velY > 2.99)
-// {
-//     double A = 5.0;
-//     double B = maxSpeed;
-//     double C = -30.0;
-//     double D = 90.0;
-
-//     pitchAngle = (velY - A) / (B - A) * (D - C) + C;
-// }
+void Player::reset()
+{
+    yPos = startingY;
+    dstRect.y = startingY;
+    setVelocity(0);
+}

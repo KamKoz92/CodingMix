@@ -15,6 +15,7 @@
                 "Player.cpp",
                 "Background.cpp",
                 "Score.cpp",
+                // "-mwindows",
                 "-lmingw32",
                 "-lSDL2main",
                 "-lSDL2",

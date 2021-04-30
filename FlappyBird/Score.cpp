@@ -10,7 +10,6 @@ Score::Score(int w, int h)
         std::string png = ".png";
         location.append(std::to_string(i));
         location.append(png);
-        std::cout << location << std::endl;
         numbers[i] = TextureManager::LoadTexture(location.c_str());
         scoreNumber = 0;
 
@@ -39,18 +38,21 @@ void Score::render()
     else if (scoreNumber < 100)
     {
         numberDst.x = (screenWidth - (numberSrc.w * 2)) / 2;
-        TextureManager::Draw(numbers[scoreNumber], numberSrc, numberDst, 0, SDL_FLIP_NONE);
+        TextureManager::Draw(numbers[scoreNumber/10], numberSrc, numberDst, 0, SDL_FLIP_NONE);
+
         numberDst.x += numberSrc.w;
-        TextureManager::Draw(numbers[scoreNumber], numberSrc, numberDst, 0, SDL_FLIP_NONE);
+        TextureManager::Draw(numbers[scoreNumber%10], numberSrc, numberDst, 0, SDL_FLIP_NONE);
     }
     else
     {
         numberDst.x = (screenWidth - (numberSrc.w * 3)) / 2;
-        TextureManager::Draw(numbers[scoreNumber], numberSrc, numberDst, 0, SDL_FLIP_NONE);
+        TextureManager::Draw(numbers[scoreNumber/100], numberSrc, numberDst, 0, SDL_FLIP_NONE);
+
         numberDst.x += numberSrc.w;
-        TextureManager::Draw(numbers[scoreNumber], numberSrc, numberDst, 0, SDL_FLIP_NONE);
+        TextureManager::Draw(numbers[scoreNumber/10], numberSrc, numberDst, 0, SDL_FLIP_NONE);
+
         numberDst.x += numberSrc.w;
-        TextureManager::Draw(numbers[scoreNumber], numberSrc, numberDst, 0, SDL_FLIP_NONE);
+        TextureManager::Draw(numbers[scoreNumber%10], numberSrc, numberDst, 0, SDL_FLIP_NONE);
     }
 }
 void Score::addScore()

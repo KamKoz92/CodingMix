@@ -22,7 +22,7 @@ public:
     enum STATE
     {
         GAME,
-        PAUSE,
+        MENU,
         ENDGAME
     };
     STATE gameState;

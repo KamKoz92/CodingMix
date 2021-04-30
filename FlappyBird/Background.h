@@ -16,9 +16,13 @@ class Background
     SDL_Texture *base;
     SDL_Texture *pipe;
     SDL_Texture *menu;
+    SDL_Texture *gameOver;
+
     SDL_Rect baseSrc, backgroundSrc, pipeSrc;
     SDL_Rect baseDst, backgroundDst, pipeDst;
     SDL_Rect menuDst, menuSrc;
+    SDL_Rect gameOverDst, gameOverSrc;
+
     std::vector<Gate> gates;
     int maxGates;
     Score *score;
@@ -30,8 +34,11 @@ public:
     void render();
     void renderMenu();
     void renderScore();
+    void renderGameOver();
     SDL_Rect getCollider();
     void drawGate();  
     void update();
-    
+    bool checkPipeColision(SDL_Rect playerRect);
+    void setGates();
+    void reset();
 };

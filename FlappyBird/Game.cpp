@@ -44,7 +44,7 @@ void Game::initalize(const char *title, int xpos, int ypos, int width, int heigh
 
         player = new Player(50.0f, 175.0f);
         background = new Background(50);
-        gameState = STATE::PAUSE;
+        gameState = STATE::MENU;
     }
 }
 
@@ -69,6 +69,11 @@ void Game::update()
         player->updatePosition();
         checkColliders();
     }
+    if (gameState == STATE::ENDGAME)
+    {
+        player->updatePosition();
+    }
+
     keyBoardUpdate();
     player->updateFrame();
 }
@@ -78,14 +83,20 @@ void Game::keyBoardUpdate()
     {
         if (event.key.keysym.sym == SDLK_SPACE)
         {
-
-            if (getGameState() == STATE::PAUSE)
+            if (getGameState() == STATE::MENU)
             {
                 setGameState(STATE::GAME);
             }
             else if (getGameState() == STATE::GAME)
             {
                 player->setMinVelocity();
+            }
+            else if (getGameState() == STATE::ENDGAME)
+            {
+                player->reset();
+                background->reset();
+                setGameState(STATE::MENU);
+                cout << player->getCollider().x << " " << player->getCollider().y << endl;
             }
         }
     }
@@ -94,13 +105,18 @@ void Game::render()
 {
     SDL_RenderClear(renderer);
     background->render();
-    if (gameState == STATE::PAUSE)
+    if (gameState == STATE::MENU)
     {
         background->renderMenu();
     }
     else if (gameState == STATE::GAME)
     {
         background->renderScore();
+    }
+    else if (gameState == STATE::ENDGAME)
+    {
+        background->renderScore();
+        background->renderGameOver();
     }
 
     player->render();
@@ -124,6 +140,11 @@ void Game::checkColliders()
     else
     {
         player->setMaxSpeed(10.0f);
+    }
+    if (background->checkPipeColision(player->getCollider()))
+    {
+        gameState = STATE::ENDGAME;
+        player->setMinVelocity();
     }
 }
 

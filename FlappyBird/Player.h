@@ -8,6 +8,8 @@ class Player
     SDL_Texture *playerTexture;
     SDL_Rect srcRect, dstRect;
     SDL_Renderer *renderer;
+    float startingX;
+    float startingY;
     float xPos;
     float yPos;
     float velY;
@@ -21,6 +23,8 @@ class Player
     int currentFrame;
     double pitchAngle;
 
+
+
 public:
     Player(float x, float y);
     ~Player();
@@ -33,4 +37,5 @@ public:
     void setMaxSpeed(float mS);
     void setTextures();
     void setCurrentFrame();
+    void reset();
 };

@@ -9,6 +9,7 @@ Background::Background(int scorePoint)
     base = TextureManager::LoadTexture("assets/sprites/base.png");
     pipe = TextureManager::LoadTexture("assets/sprites/pipe-green.png");
     menu = TextureManager::LoadTexture("assets/sprites/message.png");
+    gameOver = TextureManager::LoadTexture("assets/sprites/gameover.png");
 
     backgroundSrc.x = 0;
     backgroundSrc.y = 0;
@@ -48,12 +49,18 @@ Background::Background(int scorePoint)
     menuDst.w = menuSrc.w;
     menuDst.h = menuSrc.h;
 
+    gameOverSrc.x = 0;
+    gameOverSrc.y = 0;
+    SDL_QueryTexture(gameOver, NULL, NULL, &gameOverSrc.w, &gameOverSrc.h);
+
+    gameOverDst.x = (backgroundDst.w - gameOverSrc.w) / 2;
+    gameOverDst.y = 25;
+    gameOverDst.w = gameOverSrc.w;
+    gameOverDst.h = gameOverSrc.h;
+
     maxGates = 3;
 
-    for (int i = 0; i < maxGates; i++)
-    {
-        gates.push_back(Gate(300 + (i * 120), 150, pipeSrc.w, 125, backgroundSrc.h - baseSrc.h));
-    }
+    setGates();
 
     srand(time(NULL));
     score = new Score(backgroundSrc.w, backgroundSrc.h);
@@ -85,6 +92,10 @@ void Background::renderMenu()
 {
     TextureManager::Draw(menu, menuSrc, menuDst, 0, SDL_FLIP_NONE);
 }
+void Background::renderGameOver()
+{
+    TextureManager::Draw(gameOver, gameOverSrc, gameOverDst, 0, SDL_FLIP_NONE);
+}
 
 SDL_Rect Background::getCollider()
 {
@@ -115,10 +126,43 @@ void Background::update()
     {
         gates[i].moveGateHorizon(-2);
 
+        if (gates[i].gap.x == scorePoint)
+        {
+            score->addScore();
+        }
         if ((gates[i].gap.x + gates[i].gap.w) < 0)
         {
             gates[i].moveGateHorizon(backgroundSrc.w + pipeSrc.w + 20);
             gates[i].moveGateVertical(rand() % 7 - 3);
         }
     }
+}
+
+bool Background::checkPipeColision(SDL_Rect playerRect)
+{
+
+    for (Gate g : gates)
+    {
+        if (Collider::AABB(playerRect, g.upperPipe) ||
+            Collider::AABB(playerRect, g.lowerPipe))
+        {
+            std::cout << "Player hit pipe" << std::endl;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void Background::setGates()
+{
+    gates.clear();
+    for (int i = 0; i < maxGates; i++)
+    {
+        gates.push_back(Gate(300 + (i * 120), 150, pipeSrc.w, 125, backgroundSrc.h - baseSrc.h));
+    }
+}
+void Background::reset()
+{
+    setGates();
+    score->resetScore();
 }
