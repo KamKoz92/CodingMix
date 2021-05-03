@@ -2,7 +2,8 @@
 #define GAME_H_
 
 #include "SDL2/SDL.h"
-#include <SDL2/SDL_image.h>
+#include "SDL2/SDL_image.h"
+#include "SDL2/SDL_mixer.h"
 #include "Player.h"
 #include "TextureManager.h"
 #include "Background.h"
@@ -18,6 +19,9 @@ class Game
 public:
     static SDL_Renderer *renderer;
     static SDL_Event event;
+    static Mix_music *wing;
+    static Mix_music *scorePoint;
+    static Mix_music *die;
     static bool isRunning;
     enum STATE
     {

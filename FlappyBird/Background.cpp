@@ -146,7 +146,6 @@ bool Background::checkPipeColision(SDL_Rect playerRect)
         if (Collider::AABB(playerRect, g.upperPipe) ||
             Collider::AABB(playerRect, g.lowerPipe))
         {
-            std::cout << "Player hit pipe" << std::endl;
             return 1;
         }
     }

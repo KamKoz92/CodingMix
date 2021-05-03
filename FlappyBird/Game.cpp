@@ -8,6 +8,10 @@ bool Game::isRunning = false;
 Player *player = nullptr;
 Background *background;
 
+Mix_Music *wing = nullptr;
+Mix_Music *scorePoint = nullptr;
+Mix_Music *die = nullptr;
+
 Game::Game()
 {
 }
@@ -45,6 +49,12 @@ void Game::initalize(const char *title, int xpos, int ypos, int width, int heigh
         player = new Player(50.0f, 175.0f);
         background = new Background(50);
         gameState = STATE::MENU;
+
+        if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+        {
+            cout<<"SDL_Mixer could not initialize!" << endl;
+            cout << Mix_GetError()  << endl;
+        }
     }
 }
 
@@ -91,12 +101,14 @@ void Game::keyBoardUpdate()
             {
                 player->setMinVelocity();
             }
-            else if (getGameState() == STATE::ENDGAME)
+        }
+        else if (event.key.keysym.sym == SDLK_RETURN)
+        {
+            if (getGameState() == STATE::ENDGAME)
             {
                 player->reset();
                 background->reset();
                 setGameState(STATE::MENU);
-                cout << player->getCollider().x << " " << player->getCollider().y << endl;
             }
         }
     }
