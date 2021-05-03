@@ -19,9 +19,7 @@ class Game
 public:
     static SDL_Renderer *renderer;
     static SDL_Event event;
-    static Mix_music *wing;
-    static Mix_music *scorePoint;
-    static Mix_music *die;
+
     static bool isRunning;
     enum STATE
     {
@@ -46,6 +44,8 @@ public:
     void checkColliders();
     STATE getGameState();
     void setGameState(STATE state);
+    static void playSound(std::string name);
+
 };
 
 #endif

@@ -18,6 +18,7 @@ class Background
     SDL_Texture *menu;
     SDL_Texture *gameOver;
 
+
     SDL_Rect baseSrc, backgroundSrc, pipeSrc;
     SDL_Rect baseDst, backgroundDst, pipeDst;
     SDL_Rect menuDst, menuSrc;

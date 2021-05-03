@@ -23,6 +23,12 @@ Player::Player(float x, float y)
     maxSpeed = 8.0f;
     minSpeed = -5.0f;
     setVelocity(0);
+
+    playerColider.x = dstRect.x - 1;
+    playerColider.y = dstRect.y - 1;
+    playerColider.w = dstRect.w - 1;
+    playerColider.h = dstRect.h - 1;
+
 }
 
 Player::~Player()
@@ -52,7 +58,7 @@ void Player::updatePosition()
         setVelocity(0);
     }
     dstRect.y = yPos;
-
+    playerColider.y = dstRect.y - 1;
     
 }
 void Player::updateFrame()
@@ -68,7 +74,7 @@ void Player::render()
 
 SDL_Rect Player::getCollider()
 {
-    return dstRect;
+    return playerColider;
 }
 
 void Player::setMaxSpeed(float mS)

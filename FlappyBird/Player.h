@@ -6,7 +6,7 @@
 class Player
 {
     SDL_Texture *playerTexture;
-    SDL_Rect srcRect, dstRect;
+    SDL_Rect srcRect, dstRect, playerColider;
     SDL_Renderer *renderer;
     float startingX;
     float startingY;

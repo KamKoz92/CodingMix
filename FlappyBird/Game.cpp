@@ -8,9 +8,9 @@ bool Game::isRunning = false;
 Player *player = nullptr;
 Background *background;
 
-Mix_Music *wing = nullptr;
-Mix_Music *scorePoint = nullptr;
-Mix_Music *die = nullptr;
+Mix_Chunk *wing = nullptr;
+Mix_Chunk *hit = nullptr;
+Mix_Chunk *point = nullptr;
 
 Game::Game()
 {
@@ -52,8 +52,17 @@ void Game::initalize(const char *title, int xpos, int ypos, int width, int heigh
 
         if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
         {
-            cout<<"SDL_Mixer could not initialize!" << endl;
-            cout << Mix_GetError()  << endl;
+            cout << "SDL_Mixer could not initialize!" << endl;
+            cout << Mix_GetError() << endl;
+        }
+
+        wing = Mix_LoadWAV("assets/audio/wing.wav");
+        hit = Mix_LoadWAV("assets/audio/hit.wav");
+        point = Mix_LoadWAV("assets/audio/point.wav");
+
+        if (wing == NULL || hit == NULL || point == NULL)
+        {
+            cout << "failed to load wav" << Mix_GetError() << endl;
         }
     }
 }
@@ -100,6 +109,7 @@ void Game::keyBoardUpdate()
             else if (getGameState() == STATE::GAME)
             {
                 player->setMinVelocity();
+                Game::playSound("wing");
             }
         }
         else if (event.key.keysym.sym == SDLK_RETURN)
@@ -139,6 +149,9 @@ void Game::clean()
 {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
+    Mix_FreeChunk(wing);
+    Mix_FreeChunk(hit);
+    Mix_Quit();
     SDL_Quit();
     cout << "Game Closed!" << endl;
 }
@@ -155,6 +168,7 @@ void Game::checkColliders()
     }
     if (background->checkPipeColision(player->getCollider()))
     {
+        Game::playSound("hit");
         gameState = STATE::ENDGAME;
         player->setMinVelocity();
     }
@@ -167,4 +181,22 @@ Game::STATE Game::getGameState()
 void Game::setGameState(Game::STATE state)
 {
     gameState = state;
+}
+
+void Game::playSound(std::string name)
+{
+    Mix_Chunk *temp = nullptr;
+    if (name == "wing")
+    {
+        temp = wing;
+    }
+    else if (name == "point")
+    {
+        temp = point;
+    }
+    else if (name == "hit")
+    {
+        temp = hit;
+    }
+    Mix_PlayChannel(-1, temp, 0);
 }

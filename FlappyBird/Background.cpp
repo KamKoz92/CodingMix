@@ -65,6 +65,7 @@ Background::Background(int scorePoint)
     srand(time(NULL));
     score = new Score(backgroundSrc.w, backgroundSrc.h);
     this->scorePoint = scorePoint;
+
 }
 
 Background::~Background()
@@ -128,6 +129,7 @@ void Background::update()
 
         if (gates[i].gap.x == scorePoint)
         {
+            Game::playSound("point");
             score->addScore();
         }
         if ((gates[i].gap.x + gates[i].gap.w) < 0)
