@@ -5,23 +5,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
-public class Map extends JPanel implements ActionListener{
+public class Map extends JPanel implements ActionListener {
     private int[][] caveMap;
     private int width, height;
     private Random r;
     private int fillPercent;
+    private int scale;
 
-    public Map(int width, int height, long seed, int fillPercent) {
-        caveMap = new int[width][height];
-        this.width = width;
-        this.height = height;
+    public Map(int width, int height, long seed, int fillPercent, int scale) {
+        caveMap = new int[width / scale][height / scale];
+        this.width = width / scale;
+        this.height = height / scale;
+        this.scale = scale;
         r = new Random(seed);
         this.fillPercent = fillPercent;
         fillMap();
-        // for(int i = 0; i < 1; i++) {
-            
-        //     smoothMap();
-        // }
+        for (int i = 0; i < 5; i++) {
+
+            smoothMap();
+        }
     }
 
     private void fillMap() {
@@ -40,9 +42,9 @@ public class Map extends JPanel implements ActionListener{
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 int wallTiles = getSurroundingWallCount(x, y);
-                if(wallTiles > 4) {
+                if (wallTiles > 4) {
                     caveMap[x][y] = 1;
-                } else if(wallTiles < 4) {
+                } else if (wallTiles < 4) {
                     caveMap[x][y] = 0;
                 }
             }
@@ -71,7 +73,7 @@ public class Map extends JPanel implements ActionListener{
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 g.setColor((caveMap[x][y] < 1) ? Color.white : Color.black);
-                g.drawRect(x, y, 1, 1);
+                g.fillRect(x * scale, y * scale, scale, scale);
             }
         }
         super.repaint();
@@ -79,6 +81,6 @@ public class Map extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        smoothMap();
+        // smoothMap();
     }
 }
