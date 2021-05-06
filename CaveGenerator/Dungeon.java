@@ -17,11 +17,13 @@ public class Dungeon extends JPanel implements ActionListener {
     private int height;
     private int scale;
     private Set<Point> randomWalk;
+    private boolean randomStartPosition;
 
-    public Dungeon(int width, int height, int scale) {
+    public Dungeon(int width, int height, int scale, boolean randomStartPosition) {
         this.width = width / scale;
         this.height = height / scale;
         this.scale = scale;
+        this.randomStartPosition = randomStartPosition;
         dungeonTiles = new int[this.width][this.height];
         randomWalk = new HashSet<Point>();
         fillTiles();
@@ -53,11 +55,16 @@ public class Dungeon extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Point startingPoint;
-        if(randomWalk.isEmpty()) {
-            startingPoint = new Point(width/2, height/2);
+        if(randomStartPosition) {
+            if(randomWalk.isEmpty()) {
+                startingPoint = new Point(width/2, height/2);
+            } else {
+                startingPoint =(Point)randomWalk.toArray()[Point.r.nextInt(randomWalk.size())];
+            }
         } else {
-            startingPoint =(Point)randomWalk.toArray()[Point.r.nextInt(randomWalk.size())];
+            startingPoint = new Point(width/2, height/2);
         }
+
         randomWalk.addAll(simpleRandomWalk(startingPoint, 25));
         System.out.println("Path Created");
         for (Point p : randomWalk) {
@@ -87,11 +94,6 @@ public class Dungeon extends JPanel implements ActionListener {
         private int x;
         private int y;
         private static Random r = new Random();
-
-        public Point() {
-            x = 0;
-            y = 0;
-        }
 
         public Point(int x, int y) {
             this.x = x;
