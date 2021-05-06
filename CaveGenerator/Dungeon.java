@@ -2,12 +2,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+
 
 import javax.swing.JPanel;
 
@@ -27,7 +23,6 @@ public class Dungeon extends JPanel implements ActionListener {
         dungeonTiles = new int[this.width][this.height];
         randomWalk = new HashSet<Point>();
         fillTiles();
-        
 
     }
 
@@ -54,21 +49,23 @@ public class Dungeon extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
         Point startingPoint;
-        if(randomStartPosition) {
-            if(randomWalk.isEmpty()) {
-                startingPoint = new Point(width/2, height/2);
+        if (randomStartPosition) {
+            if (randomWalk.isEmpty()) {
+                startingPoint = new Point(width / 2, height / 2);
             } else {
-                startingPoint =(Point)randomWalk.toArray()[Point.r.nextInt(randomWalk.size())];
+                startingPoint = (Point) randomWalk.toArray()[Point.r.nextInt(randomWalk.size())];
             }
         } else {
-            startingPoint = new Point(width/2, height/2);
+            startingPoint = new Point(width / 2, height / 2);
         }
 
         randomWalk.addAll(simpleRandomWalk(startingPoint, 25));
+
         System.out.println("Path Created");
         for (Point p : randomWalk) {
-        dungeonTiles[p.x][p.y] = 0;
+            dungeonTiles[p.x][p.y] = 0;
         }
         System.out.println("Path Engraved");
 
@@ -123,6 +120,7 @@ public class Dungeon extends JPanel implements ActionListener {
             hashCode = 31 * hashCode + y;
             return hashCode;
         }
+
         public static Point add(Point a, Point b) {
             return new Point(a.x + b.x, a.y + b.y);
 
