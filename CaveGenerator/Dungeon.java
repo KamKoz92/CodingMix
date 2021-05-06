@@ -93,6 +93,7 @@ public class Dungeon extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         drawDungeon(g);
+        sheet.draw(g);
         super.repaint();
     }
 
