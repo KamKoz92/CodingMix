@@ -3,8 +3,6 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
-
-
 import javax.swing.JPanel;
 
 public class Dungeon extends JPanel implements ActionListener {
@@ -14,6 +12,7 @@ public class Dungeon extends JPanel implements ActionListener {
     private int scale;
     private Set<Point> randomWalk;
     private boolean randomStartPosition;
+    private SpriteSheet sheet;
 
     public Dungeon(int width, int height, int scale, boolean randomStartPosition) {
         this.width = width / scale;
@@ -22,8 +21,34 @@ public class Dungeon extends JPanel implements ActionListener {
         this.randomStartPosition = randomStartPosition;
         dungeonTiles = new int[this.width][this.height];
         randomWalk = new HashSet<Point>();
-        fillTiles();
 
+        fillTiles();
+        randomWalkGeneration(new Point(this.width / 2, this.height / 2), 100, 200, 
+                new Point(0, 0),
+                new Point(this.width, this.height));
+
+        sheet = new SpriteSheet("Dungeon_Tileset.png");
+    }
+
+    private void randomWalkGeneration(Point startingPoint, int iterations, int walkLength, Point firstBoundPoint,
+            Point secondBoundPoint) {
+        if (randomStartPosition) {
+            if (randomWalk.isEmpty()) {
+                startingPoint = new Point(width / 2, height / 2);
+            } else {
+                startingPoint = (Point) randomWalk.toArray()[Point.r.nextInt(randomWalk.size())];
+            }
+        }
+
+        for (int i = 0; i < iterations; i++) {
+            randomWalk.addAll(simpleRandomWalk(startingPoint, walkLength, firstBoundPoint, secondBoundPoint));
+        }
+
+        System.out.println("Path Created");
+        for (Point p : randomWalk) {
+            dungeonTiles[p.x][p.y] = 0;
+        }
+        System.out.println("Path Engraved");
     }
 
     private void fillTiles() {
@@ -34,40 +59,33 @@ public class Dungeon extends JPanel implements ActionListener {
         }
     }
 
-    private HashSet<Point> simpleRandomWalk(Point startPosition, int walkLength) {
+    private HashSet<Point> simpleRandomWalk(Point startPosition, int walkLength, Point firstBoundPoint,
+            Point secondBoundPoint) {
         HashSet<Point> path = new HashSet<Point>();
         path.add(startPosition);
         Point previousPosition = startPosition;
         for (int i = 0; i < walkLength; i++) {
             Point newPosition = Point.add(previousPosition, Point.getRandomCardinalDirection());
-            path.add(newPosition);
-            previousPosition = newPosition;
+
+            if (isPointInBounds(newPosition, firstBoundPoint, secondBoundPoint)) {
+                path.add(newPosition);
+                previousPosition = newPosition;
+            }
         }
 
         return path;
     }
 
+    private boolean isPointInBounds(Point point, Point firstBoundPoint, Point secondBoundPoint) {
+        if (firstBoundPoint.x <= point.x && point.x < secondBoundPoint.x && 
+            firstBoundPoint.y <= point.y && point.y < secondBoundPoint.y) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        Point startingPoint;
-        if (randomStartPosition) {
-            if (randomWalk.isEmpty()) {
-                startingPoint = new Point(width / 2, height / 2);
-            } else {
-                startingPoint = (Point) randomWalk.toArray()[Point.r.nextInt(randomWalk.size())];
-            }
-        } else {
-            startingPoint = new Point(width / 2, height / 2);
-        }
-
-        randomWalk.addAll(simpleRandomWalk(startingPoint, 25));
-
-        System.out.println("Path Created");
-        for (Point p : randomWalk) {
-            dungeonTiles[p.x][p.y] = 0;
-        }
-        System.out.println("Path Engraved");
 
     }
 
