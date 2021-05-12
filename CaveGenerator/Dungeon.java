@@ -1,7 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.JPanel;
 
@@ -12,7 +11,7 @@ public class Dungeon extends JPanel implements ActionListener {
     private int scale;
     private Set<Point> randomWalk;
     private boolean randomStartPosition;
-    private SpriteSheet sheet;
+    private DungeonTileset dungeonTileset;
 
     public Dungeon(int width, int height, int scale, boolean randomStartPosition) {
         this.width = width / scale;
@@ -23,11 +22,10 @@ public class Dungeon extends JPanel implements ActionListener {
         randomWalk = new HashSet<Point>();
 
         fillTiles();
-        randomWalkGeneration(new Point(this.width / 2, this.height / 2), 100, 200, 
-                new Point(0, 0),
+        randomWalkGeneration(new Point(this.width / 2, this.height / 2), 50, 100, new Point(0, 0),
                 new Point(this.width, this.height));
 
-        sheet = new SpriteSheet("Dungeon_Tileset.png");
+        dungeonTileset = new DungeonTileset("Dungeon_Tileset.png");
     }
 
     private void randomWalkGeneration(Point startingPoint, int iterations, int walkLength, Point firstBoundPoint,
@@ -72,13 +70,12 @@ public class Dungeon extends JPanel implements ActionListener {
                 previousPosition = newPosition;
             }
         }
-
         return path;
     }
 
     private boolean isPointInBounds(Point point, Point firstBoundPoint, Point secondBoundPoint) {
-        if (firstBoundPoint.x <= point.x && point.x < secondBoundPoint.x && 
-            firstBoundPoint.y <= point.y && point.y < secondBoundPoint.y) {
+        if (firstBoundPoint.x <= point.x && point.x < secondBoundPoint.x && firstBoundPoint.y <= point.y
+                && point.y < secondBoundPoint.y) {
             return true;
         }
         return false;
@@ -93,15 +90,20 @@ public class Dungeon extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         drawDungeon(g);
-        sheet.draw(g);
         super.repaint();
     }
 
     private void drawDungeon(Graphics g) {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                g.setColor((dungeonTiles[x][y] < 1) ? Color.white : Color.black);
-                g.fillRect(x * scale, y * scale, scale, scale);
+                // g.setColor((dungeonTiles[x][y] < 1) ? Color.white : Color.black);
+                if (dungeonTiles[x][y] < 1) {
+                    g.drawImage(dungeonTileset.getTile("floor1"), x * scale, y * scale, null);
+                } else {
+                    g.setColor(Color.black);
+                    g.fillRect(x * scale, y * scale, scale, scale);
+                }
+
             }
         }
     }
