@@ -1,4 +1,5 @@
-import java.awt.Color;
+
+// import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.*;
 import java.util.*;
@@ -96,16 +97,46 @@ public class Dungeon extends JPanel implements ActionListener {
     private void drawDungeon(Graphics g) {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                // g.setColor((dungeonTiles[x][y] < 1) ? Color.white : Color.black);
-                if (dungeonTiles[x][y] < 1) {
-                    g.drawImage(dungeonTileset.getTile("floor1"), x * scale, y * scale, null);
+                if (dungeonTiles[x][y] == 0) {
+                    g.drawImage(dungeonTileset.getTile("basicFloor"), x * scale, y * scale, null);
                 } else {
-                    g.setColor(Color.black);
-                    g.fillRect(x * scale, y * scale, scale, scale);
+                    g.drawImage(dungeonTileset.getTile(getWallType(x, y)), x * scale, y * scale, null);
                 }
 
             }
         }
+    }
+
+    private String getWallType(int x, int y) {
+
+        if (!tileSolid(x, y + 1)) {
+            return "topWall";
+        }
+        if (!tileSolid(x, y - 1)) {
+            return "bottomWall";
+        }
+        if (!tileSolid(x - 1, y)) {
+            return "rightWall";
+        }
+        if (!tileSolid(x + 1, y)) {
+            return "leftWall";
+        }
+        
+
+        return "basicWall";
+    }
+
+    private boolean tileSolid(int x, int y) {
+        if (0 <= x && x < width && 0 <= y && y < height) {
+            if (dungeonTiles[x][y] == 0) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+
     }
 
     private static class Point {
